@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreRoleRequestRequest;
+use App\Models\RoleRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
 
@@ -18,5 +20,30 @@ class RoleRequestController extends Controller
         return response()->json([
             'exists' => $exists,
         ]);
+    }
+
+    public function handleExistingStudent(StoreRoleRequestRequest $request)
+    {
+        $user = User::where('email', $request->email)->first();
+
+        if (!$user) {
+            return response()->json([
+                'message' => 'Aucun compte trouvé avec cet email.',
+            ], 404);
+        }
+
+        $roleRequest = RoleRequest::create([
+            'user_id'             => $user->id,
+            'name'                => $request->name,
+            'email'               => $request->email,
+            'student_id'          => $request->student_id,
+            'is_existing_student' => true,
+            'status'              => 'pending',
+        ]);
+
+        return response()->json([
+            'message'      => 'Votre demande de rôle organisateur a été soumise avec succès.',
+            'role_request' => $roleRequest,
+        ], 201);
     }
 }
