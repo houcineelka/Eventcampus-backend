@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Route;
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::get('/check-email', [RoleRequestController::class, 'checkEmail']);
+Route::post('/role-requests', [RoleRequestController::class, 'store']);
 
 Route::middleware('auth:api')->group(function () {
     Route::get('/me', [UserController::class, 'me']);

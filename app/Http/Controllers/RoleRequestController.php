@@ -22,6 +22,15 @@ class RoleRequestController extends Controller
         ]);
     }
 
+    public function store(StoreRoleRequestRequest $request)
+    {
+        if ($request->is_existing_student) {
+            return $this->handleExistingStudent($request);
+        }
+
+        return $this->handleNewUser($request);
+    }
+
     public function handleExistingStudent(StoreRoleRequestRequest $request)
     {
         $user = User::where('email', $request->email)->first();
