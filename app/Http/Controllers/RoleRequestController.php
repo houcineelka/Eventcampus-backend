@@ -7,7 +7,6 @@ use App\Models\RoleRequest;
 use App\Models\User;
 use App\Notifications\RoleRequestSubmitted;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Notification;
 
 class RoleRequestController extends Controller
 {
@@ -52,8 +51,7 @@ class RoleRequestController extends Controller
             'status'              => 'pending',
         ]);
 
-        Notification::route('mail', config('app.admin_email'))
-            ->notify(new RoleRequestSubmitted($roleRequest));
+        $this->notifyAdmins($roleRequest);
 
         return response()->json([
             'message'      => 'Votre demande de rôle organisateur a été soumise avec succès.',
@@ -79,12 +77,18 @@ class RoleRequestController extends Controller
             'status'              => 'pending',
         ]);
 
-        Notification::route('mail', config('app.admin_email'))
-            ->notify(new RoleRequestSubmitted($roleRequest));
+        $this->notifyAdmins($roleRequest);
 
         return response()->json([
             'message'      => 'Votre compte a été créé et votre demande de rôle organisateur a été soumise avec succès.',
             'role_request' => $roleRequest,
         ], 201);
+    }
+
+    private function notifyAdmins(RoleRequest $roleRequest): void
+    {
+        User::where('role', 'admin')->each(function (User $admin) use ($roleRequest) {
+            $admin->notify(new RoleRequestSubmitted($roleRequest));
+        });
     }
 }
