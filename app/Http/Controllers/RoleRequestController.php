@@ -46,4 +46,28 @@ class RoleRequestController extends Controller
             'role_request' => $roleRequest,
         ], 201);
     }
+
+    public function handleNewUser(StoreRoleRequestRequest $request)
+    {
+        $user = User::create([
+            'name'     => $request->name,
+            'email'    => $request->email,
+            'password' => $request->password,
+            'role'     => 'etudiant',
+        ]);
+
+        $roleRequest = RoleRequest::create([
+            'user_id'             => $user->id,
+            'name'                => $request->name,
+            'email'               => $request->email,
+            'student_id'          => $request->student_id,
+            'is_existing_student' => false,
+            'status'              => 'pending',
+        ]);
+
+        return response()->json([
+            'message'      => 'Votre compte a été créé et votre demande de rôle organisateur a été soumise avec succès.',
+            'role_request' => $roleRequest,
+        ], 201);
+    }
 }

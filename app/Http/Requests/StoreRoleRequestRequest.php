@@ -16,12 +16,18 @@ class StoreRoleRequestRequest extends FormRequest
 
     public function rules(): array
     {
-        return [
-            'name'               => 'required|string|max:255',
-            'email'              => 'required|email',
-            'student_id'         => 'nullable|string|max:50',
+        $rules = [
+            'name'                => 'required|string|max:255',
+            'email'               => 'required|email',
+            'student_id'          => 'nullable|string|max:50',
             'is_existing_student' => 'required|boolean',
         ];
+
+        if ($this->input('is_existing_student') == false) {
+            $rules['password'] = 'required|string|min:8|confirmed';
+        }
+
+        return $rules;
     }
 
     public function messages(): array
@@ -32,6 +38,9 @@ class StoreRoleRequestRequest extends FormRequest
             'email.email'                 => 'L\'email doit être une adresse valide.',
             'is_existing_student.required' => 'Le champ is_existing_student est obligatoire.',
             'is_existing_student.boolean'  => 'Le champ is_existing_student doit être vrai ou faux.',
+            'password.required'            => 'Le mot de passe est obligatoire.',
+            'password.min'                 => 'Le mot de passe doit contenir au moins 8 caractères.',
+            'password.confirmed'           => 'La confirmation du mot de passe ne correspond pas.',
         ];
     }
 }
