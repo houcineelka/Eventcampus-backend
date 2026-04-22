@@ -2,11 +2,13 @@
 
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\UserController;
+use App\Http\Controllers\RoleRequestController;
 use App\Http\Controllers\StudentController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
+Route::get('/check-email', [RoleRequestController::class, 'checkEmail']);
 
 Route::middleware('auth:api')->group(function () {
     Route::get('/me', [UserController::class, 'me']);
