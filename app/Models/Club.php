@@ -28,8 +28,6 @@ class Club extends Model
                     ->withTimestamps();
     }
 
-    public function evenements()
-    {
-        return $this->hasMany(Evenement::class);
-    }
+    //public function evenements()
+    //{return $this->hasMany(Evenement::class);} 
 }
