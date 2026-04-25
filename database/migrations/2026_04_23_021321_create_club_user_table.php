@@ -23,4 +23,5 @@ return new class extends Migration
     {
         Schema::dropIfExists('club_user');
     }
+    
 };

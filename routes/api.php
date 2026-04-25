@@ -23,4 +23,5 @@ Route::middleware('auth:api')->group(function () {
     Route::middleware('role:etudiant')->group(function () {
         Route::get('/student/dashboard', [StudentController::class, 'dashboard']);
     });
+    
 });

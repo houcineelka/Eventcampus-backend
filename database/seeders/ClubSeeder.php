@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Hash;
 class ClubSeeder extends Seeder
 {
     public function run(): void
+
     {
         $etudiant = User::create([
             'prenom'   => 'Aymane',
@@ -36,6 +37,7 @@ class ClubSeeder extends Seeder
             ['nom' => 'Club Musique',                'description' => 'Sessions de jam, concerts acoustiques.',                'categorie' => 'Art',           'emoji' => '🎵', 'createur_id' => $orga->id],
             ['nom' => 'Club Sportif Universitaire',  'description' => 'Tournois inter-facultés, compétitions régionales.',     'categorie' => 'Sport',         'emoji' => '⚽', 'createur_id' => $orga->id],
             ['nom' => 'Club Arts Plastiques',        'description' => 'Ateliers de peinture, dessin et photographie.',        'categorie' => 'Art',           'emoji' => '🎨', 'createur_id' => $orga->id],
+            
         ];
 
         foreach ($clubs as $clubData) {

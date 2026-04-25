@@ -13,6 +13,7 @@ class Club extends Model
         'categorie',
         'emoji',
         'createur_id',
+        
     ];
 
     // Relations
@@ -26,6 +27,7 @@ class Club extends Model
         return $this->belongsToMany(User::class, 'club_user')
                     ->withPivot('role')
                     ->withTimestamps();
+                
     }
 
     //public function evenements()

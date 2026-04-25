@@ -82,4 +82,5 @@ class ClubController extends Controller
 
         return response()->json(['message' => 'Vous avez quitté le club.']);
     }
+    
 }

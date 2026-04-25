@@ -24,4 +24,6 @@ class DatabaseSeeder extends Seeder
         $this->call(ClubSeeder::class); 
 
     }
+
+
 }
