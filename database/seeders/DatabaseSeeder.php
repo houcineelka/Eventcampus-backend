@@ -21,7 +21,8 @@ class DatabaseSeeder extends Seeder
             'prenom' => 'Test',
             'nom'    => 'User',
         ]);
-        $this->call(ClubSeeder::class); 
+        $this->call(ClubSeeder::class);
+        $this->call(EventSeeder::class); 
 
     }
 }
