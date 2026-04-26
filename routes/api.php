@@ -5,6 +5,7 @@ use App\Http\Controllers\Auth\UserController;
 use App\Http\Controllers\RoleRequestController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\ClubController;
+use App\Http\Controllers\EventController;
 
 use Illuminate\Support\Facades\Route;
 
@@ -22,6 +23,12 @@ Route::middleware('auth:api')->group(function () {
     Route::get('/clubs/{id}',         [ClubController::class, 'show']);
     Route::post('/clubs/{id}/join',   [ClubController::class, 'join']);
     Route::post('/clubs/{id}/leave',  [ClubController::class, 'leave']);
+
+    // Events
+    Route::get('/events',                  [EventController::class, 'index']);
+    Route::get('/events/{id}',             [EventController::class, 'show']);
+    Route::post('/events/{id}/register',   [EventController::class, 'register']);
+    Route::post('/events/{id}/unregister', [EventController::class, 'unregister']);
 
     Route::middleware('role:etudiant')->group(function () {
         Route::get('/student/dashboard', [StudentController::class, 'dashboard']);
