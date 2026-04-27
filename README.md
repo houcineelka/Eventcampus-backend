@@ -1,66 +1,125 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# EventCampus
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+> Plateforme officielle des clubs et de leurs événements universitaires
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Objet du projet
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+**EventCampus** est une application web responsive développée dans le cadre du module **DevOps — Master ISI**. Elle répond à un problème concret vécu au quotidien sur les campus universitaires : la dispersion des informations liées aux événements et aux clubs étudiants sur de multiples canaux non officiels (WhatsApp, affiches papier, pages Facebook).
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+L'application centralise en une seule plateforme la découverte, la création et la gestion des événements organisés par les clubs du campus. Chaque événement est obligatoirement rattaché à un club — la navigation est bidirectionnelle : la page d'un événement renvoie vers son club, et la page d'un club affiche tous ses événements.
 
-## Learning Laravel
+Elle s'adresse à trois types d'utilisateurs :
+- **Étudiant** — consulter les événements, s'inscrire, rejoindre des clubs
+- **Organisateur** — gérer son club, créer des événements, communiquer avec ses membres
+- **Administrateur** — valider les contenus, gérer les rôles, superviser la plateforme
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+Le projet est développé en **4 sprints de 2 semaines** (+ 1 Sprint 0 de conception) selon la méthodologie **Scrum**.
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+---
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## Membres de l'équipe
 
-## Laravel Sponsors
+| Nom | Rôle Scrum | Responsabilités |
+|---|---|---|
+| **Hbich Aymane** | Product Owner | Définit les besoins, priorise le backlog, valide les livrables |
+| **Elkabbaoui Houcine** | Scrum Master | Anime les cérémonies Scrum, lève les obstacles, coordonne l'équipe |
+| **Aarab Aymane** | Développeur Frontend | Pages, composants, UI clubs et événements (interface unifiée) |
+| **Guenna Ikram** | Développeur Backend | API REST, base de données, authentification |
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+---
 
-### Premium Partners
+## Stack technique
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+| Côté | Technologie |
+|---|---|
+| Frontend | React (Vite) + React Router + Axios |
+| Backend | Laravel 11 + Laravel Sanctum |
+| Base de données | MySQL |
+| Authentification | JWT via Laravel Sanctum |
+| Gestion de projet | Jira |
+| Versioning | Git + GitHub |
+| Communication | Discord |
+| Maquettes | Figma |
 
-## Contributing
+---
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## Liste des fonctionnalités principales
 
-## Code of Conduct
+### 🎓 Espace Étudiant
+- Consulter la liste des événements à venir (avec club organisateur cliquable)
+- Filtrer les événements par catégorie, date ou club organisateur
+- S'inscrire à un événement en un clic
+- Annuler une inscription
+- Rejoindre une liste d'attente quand un événement est complet
+- Consulter l'annuaire des clubs avec leurs événements
+- Envoyer une demande pour rejoindre un club
+- Naviguer depuis un événement vers son club et inversement (navigation bidirectionnelle)
+- Recevoir un email de rappel J-1 avant un événement
+- Gérer son profil, ses inscriptions et ses clubs
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### 🏛️ Espace Organisateur
+- Créer et gérer la page officielle de son club (nom, logo, description, catégorie)
+- Créer des événements rattachés automatiquement à son club
+- Modifier et supprimer ses événements
+- Voir la liste des inscrits à chaque événement
+- Gérer la liste d'attente d'un événement complet
+- Accepter ou refuser les demandes d'adhésion au club
+- Envoyer des messages aux membres du club (messagerie interne)
+- Accéder à un tableau de bord de ses activités
 
-## Security Vulnerabilities
+### 🔐 Authentification & Rôles
+- Inscription en tant qu'étudiant (rôle par défaut)
+- Connexion avec toggle Étudiant / Organisateur
+- Demande de rôle organisateur (étudiant existant ou nouveau compte)
+- Gestion des rôles multiples via la table UserRole (un utilisateur peut être étudiant ET organisateur)
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+### ⚙️ Espace Administrateur
+- Valider ou refuser les événements soumis par les organisateurs
+- Valider la création de nouveaux clubs
+- Valider les demandes de rôle organisateur
+- Suspendre ou supprimer un club
+- Activer / désactiver un rôle spécifique d'un utilisateur
+- Consulter le tableau de bord : événements validés, clubs actifs, taux d'inscription, demandes en attente
 
-## License
+---
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## Contraintes v1.0
+
+- **1 organisateur = 1 club** — un responsable gère exactement un club
+- **Tout événement appartient à un club** — pas d'événements indépendants
+- **Événements institutionnels hors scope** — journées portes ouvertes, conférences de professeurs non couvertes (prévu en v2.0)
+- **Validation admin obligatoire** — tout nouveau club, événement ou demande de rôle doit être validé
+
+---
+
+
+## Structure du projet
+
+```
+eventcampus/
+├── eventcampus-back/      # Backend Laravel 11
+└── eventcampus-front/    # Frontend React (Vite)
+```
+
+---
+
+## Lancement du projet
+
+### Backend
+```bash
+cd eventcampus-back
+composer install
+cp .env.example .env
+php artisan key:generate
+php artisan migrate --seed
+php artisan serve
+```
+
+### Frontend
+```bash
+cd eventcampus-front
+npm install
+npm run dev
+```
