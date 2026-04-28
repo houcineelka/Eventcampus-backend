@@ -27,8 +27,8 @@ Route::middleware('auth:api')->group(function () {
     // Events
     Route::get('/events',                  [EventController::class, 'index']);
     Route::get('/events/{id}',             [EventController::class, 'show']);
-    Route::post('/events/{id}/register',   [EventController::class, 'register']);
-    Route::post('/events/{id}/unregister', [EventController::class, 'unregister']);
+    Route::post('/inscriptions',           [EventController::class, 'inscrire']);
+   
 
     Route::middleware('role:etudiant')->group(function () {
         Route::get('/student/dashboard', [StudentController::class, 'dashboard']);

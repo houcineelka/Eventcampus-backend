@@ -60,43 +60,31 @@ class EventController extends Controller
     }
 
     /**
-     * POST /api/events/{id}/register
+     * POST /api/inscriptions
      */
-    public function register(Request $request, $id)
+    public function inscrire(Request $request)
     {
-        $event = Event::findOrFail($id);
-        $userId = $request->user()->id;
+        $request->validate([
+            'event_id' => 'required|exists:events,id',
+        ]);
 
-        // Check if already registered
-        if ($event->participants()->where('user_id', $userId)->exists()) {
+        $user  = auth('api')->user();
+        $event = Event::withCount('participants')->findOrFail($request->event_id);
+
+        if ($event->participants()->where('user_id', $user->id)->exists()) {
             return response()->json(['message' => 'Vous êtes déjà inscrit à cet événement.'], 409);
         }
 
-        // Check available spots
-        $registeredCount = $event->participants()->count();
-        if ($registeredCount >= $event->places_disponibles) {
-            return response()->json(['message' => 'Cet événement est complet.'], 409);
+        if ($event->places_disponibles !== null && $event->participants_count >= $event->places_disponibles) {
+            return response()->json(['message' => 'Cet événement est complet.'], 422);
         }
 
-        $event->participants()->attach($userId);
+        $event->participants()->attach($user->id);
 
-        return response()->json(['message' => 'Vous avez été inscrit à l\'événement avec succès.']);
-    }
-
-    /**
-     * POST /api/events/{id}/unregister
-     */
-    public function unregister(Request $request, $id)
-    {
-        $event = Event::findOrFail($id);
-        $userId = $request->user()->id;
-
-        if (!$event->participants()->where('user_id', $userId)->exists()) {
-            return response()->json(['message' => 'Vous n\'êtes pas inscrit à cet événement.'], 409);
+        if ($event->places_disponibles !== null) {
+            $event->decrement('places_disponibles');
         }
 
-        $event->participants()->detach($userId);
-
-        return response()->json(['message' => 'Vous avez été désinscrit de l\'événement.']);
+        return response()->json(['message' => 'Inscription réussie.'], 201);
     }
 }
