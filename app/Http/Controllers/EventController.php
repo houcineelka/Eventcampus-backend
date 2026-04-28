@@ -75,7 +75,7 @@ class EventController extends Controller
             return response()->json(['message' => 'Vous êtes déjà inscrit à cet événement.'], 409);
         }
 
-        if ($event->places_disponibles !== null && $event->participants_count >= $event->places_disponibles) {
+        if ($event->places_disponibles !== null && $event->places_disponibles <= 0) {
             return response()->json(['message' => 'Cet événement est complet.'], 422);
         }
 
