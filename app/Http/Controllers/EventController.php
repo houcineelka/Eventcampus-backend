@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Event;
+use App\Notifications\NouvelleInscriptionNotification;
 use Illuminate\Http\Request;
 
 class EventController extends Controller
@@ -83,6 +84,12 @@ class EventController extends Controller
 
         if ($event->places_disponibles !== null) {
             $event->decrement('places_disponibles');
+        }
+
+        $event->loadMissing('club.createur');
+        $organisateur = $event->club->createur;
+        if ($organisateur) {
+            $organisateur->notify(new NouvelleInscriptionNotification($event, $user));
         }
 
         return response()->json(['message' => 'Inscription réussie.'], 201);
