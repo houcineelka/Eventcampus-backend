@@ -33,6 +33,10 @@ class SendRappelEmails extends Command
 
         foreach ($events as $event) {
             foreach ($event->participants as $user) {
+                if (!$user->email_reminders) {
+                    $this->info("Rappel désactivé pour {$user->email} — ignoré.");
+                    continue;
+                }
                 Mail::to($user->email)->send(new RappelEvenementMail($user, $event));
                 $this->info("Email envoyé à {$user->email} pour l'événement : {$event->titre}");
                 $totalSent++;
