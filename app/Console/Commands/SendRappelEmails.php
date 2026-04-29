@@ -2,9 +2,11 @@
 
 namespace App\Console\Commands;
 
+use App\Mail\RappelEvenementMail;
 use App\Models\Event;
 use Illuminate\Console\Command;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Mail;
 
 class SendRappelEmails extends Command
 {
@@ -27,10 +29,16 @@ class SendRappelEmails extends Command
             return;
         }
 
+        $totalSent = 0;
+
         foreach ($events as $event) {
-            $this->info("Événement : {$event->titre} — {$event->participants->count()} inscrit(s)");
+            foreach ($event->participants as $user) {
+                Mail::to($user->email)->send(new RappelEvenementMail($user, $event));
+                $this->info("Email envoyé à {$user->email} pour l'événement : {$event->titre}");
+                $totalSent++;
+            }
         }
 
-        $this->info('Terminé.');
+        $this->info("Terminé. {$totalSent} email(s) envoyé(s).");
     }
 }
