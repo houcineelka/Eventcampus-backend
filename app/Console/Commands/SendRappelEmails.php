@@ -21,7 +21,7 @@ class SendRappelEmails extends Command
         $tomorrow = Carbon::tomorrow()->toDateString();
 
         $events = Event::whereDate('date', $tomorrow)
-            ->with('participants')
+            ->with(['participants', 'club'])
             ->get();
 
         if ($events->isEmpty()) {
