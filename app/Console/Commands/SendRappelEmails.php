@@ -2,15 +2,12 @@
 
 namespace App\Console\Commands;
 
+use App\Models\Event;
 use Illuminate\Console\Command;
+use Illuminate\Support\Carbon;
 
 class SendRappelEmails extends Command
 {
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
     protected $signature = 'rappel:send';
 
     protected $description = 'Envoie les emails de rappel aux étudiants inscrits aux événements du lendemain';
@@ -18,7 +15,22 @@ class SendRappelEmails extends Command
     public function handle()
     {
         $this->info('Envoi des emails de rappel...');
-        // La logique sera implémentée dans EP-76 et EP-77
+
+        $tomorrow = Carbon::tomorrow()->toDateString();
+
+        $events = Event::whereDate('date', $tomorrow)
+            ->with('participants')
+            ->get();
+
+        if ($events->isEmpty()) {
+            $this->info('Aucun événement demain.');
+            return;
+        }
+
+        foreach ($events as $event) {
+            $this->info("Événement : {$event->titre} — {$event->participants->count()} inscrit(s)");
+        }
+
         $this->info('Terminé.');
     }
 }
