@@ -17,6 +17,7 @@ Route::post('/role-requests', [RoleRequestController::class, 'store']);
 Route::middleware('auth:api')->group(function () {
     Route::get('/me', [UserController::class, 'me']);
     Route::post('/logout', [UserController::class, 'logout']);
+    Route::patch('/users/me/preferences', [UserController::class, 'updatePreferences']);
 
      // Clubs
     Route::get('/clubs',              [ClubController::class, 'index']);
