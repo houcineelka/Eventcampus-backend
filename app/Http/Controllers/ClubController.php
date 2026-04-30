@@ -49,12 +49,18 @@ class ClubController extends Controller
     return response()->json($club);
 }
 
+
+
     /**
-     * POST /api/clubs/{id}/join
+     * POST /api/adhesions
      */
-    public function join(Request $request, $id)
+    public function adherer(Request $request)
     {
-        $club = Club::findOrFail($id);
+        $request->validate([
+            'club_id' => 'required|exists:clubs,id',
+        ]);
+
+        $club   = Club::findOrFail($request->club_id);
         $userId = $request->user()->id;
 
         if ($club->membres()->where('user_id', $userId)->exists()) {
@@ -63,7 +69,7 @@ class ClubController extends Controller
 
         $club->membres()->attach($userId, ['role' => 'membre']);
 
-        return response()->json(['message' => 'Vous avez rejoint le club avec succès.']);
+        return response()->json(['message' => 'Vous avez rejoint le club avec succès.'], 201);
     }
 
     /**
@@ -71,7 +77,7 @@ class ClubController extends Controller
      */
     public function leave(Request $request, $id)
     {
-        $club = Club::findOrFail($id);
+        $club   = Club::findOrFail($id);
         $userId = $request->user()->id;
 
         if (!$club->membres()->where('user_id', $userId)->exists()) {
@@ -80,6 +86,6 @@ class ClubController extends Controller
 
         $club->membres()->detach($userId);
 
-        return response()->json(['message' => 'Vous avez quitté le club.']);
+        return response()->json(['message' => 'Vous avez quitté le club avec succès.']);
     }
 }

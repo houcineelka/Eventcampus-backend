@@ -22,7 +22,7 @@ Route::middleware('auth:api')->group(function () {
      // Clubs
     Route::get('/clubs',              [ClubController::class, 'index']);
     Route::get('/clubs/{id}',         [ClubController::class, 'show']);
-    Route::post('/clubs/{id}/join',   [ClubController::class, 'join']);
+    Route::post('/adhesions',         [ClubController::class, 'adherer']);
     Route::post('/clubs/{id}/leave',  [ClubController::class, 'leave']);
 
     // Events
