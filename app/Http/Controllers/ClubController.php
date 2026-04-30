@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\Club;
+use App\Notifications\NouvelleAdhesionNotification;
 use Illuminate\Http\Request;
 
 class ClubController extends Controller
@@ -68,6 +69,11 @@ class ClubController extends Controller
         }
 
         $club->membres()->attach($userId, ['role' => 'membre']);
+
+        $club->loadMissing('createur');
+        if ($club->createur) {
+            $club->createur->notify(new NouvelleAdhesionNotification($club, $request->user()));
+        }
 
         return response()->json(['message' => 'Vous avez rejoint le club avec succès.'], 201);
     }
