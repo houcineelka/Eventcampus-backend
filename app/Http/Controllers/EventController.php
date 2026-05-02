@@ -124,6 +124,7 @@ class EventController extends Controller
             $data['club_members_count'] = $event->club?->membres()->count() ?? 0;
             $data['club_events_count']  = $event->club?->events()->count() ?? 0;
             
+            
             // NOUVEAU — Branche 3 : Détails de la liste d'attente pour la vue détaillée
             $data['waitlist_details'] = $event->listeAttente()
                 ->with('user:id,name,email')
