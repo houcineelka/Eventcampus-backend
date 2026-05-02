@@ -30,8 +30,13 @@ Route::middleware('auth:api')->group(function () {
     Route::get('/events/{id}',             [EventController::class, 'show']);
     Route::post('/inscriptions',           [EventController::class, 'inscrire']);
    
+    // Inscriptions 
+    Route::post('/events/{id}/inscriptions', [InscriptionController::class, 'store']);
+    Route::delete('/events/{id}/inscriptions', [InscriptionController::class, 'destroy']);
 
     Route::middleware('role:etudiant')->group(function () {
         Route::get('/student/dashboard', [StudentController::class, 'dashboard']);
     });
+
+
 });

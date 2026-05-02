@@ -94,4 +94,42 @@ class EventController extends Controller
 
         return response()->json(['message' => 'Inscription réussie.'], 201);
     }
+
+        private function formatEvent(Event $event, bool $detailed = false): array
+    {
+        $user = Auth::user();
+        $userId = $user?->id;
+ 
+        $isRegistered = $userId ? $event->estInscrit($userId) : false;
+        $isWaitlisted = $userId ? $event->estEnListeAttente($userId) : false;
+        $waitlistPos  = $isWaitlisted ? $event->rangListeAttente($userId) : null;
+ 
+        $data = [
+            'id'                  => $event->id,
+            'titre'               => $event->titre,
+            'description'         => $event->description,
+            'date'                => $event->date,
+            'heure'               => $event->heure,
+            'date_fin'            => $event->date_fin,
+            'heure_fin'           => $event->heure_fin,
+            'lieu'                => $event->lieu,
+            'categorie'           => $event->categorie,
+            'places_disponibles'  => $event->places_disponibles,
+            'capacite_max'        => $event->capacite_max,
+            'inscrits'            => $event->inscrits,
+            'club_id'             => $event->club_id,
+            'club_name'           => $event->club?->nom,
+            // Statut de l'utilisateur connecté
+            'is_registered'       => $isRegistered,
+            'is_waitlisted'       => $isWaitlisted,
+            'waitlist_position'   => $waitlistPos,
+        ];
+ 
+        if ($detailed) {
+            $data['club_members_count'] = $event->club?->membres()->count() ?? 0;
+            $data['club_events_count']  = $event->club?->events()->count() ?? 0;
+        }
+ 
+        return $data;
+    }
 }
