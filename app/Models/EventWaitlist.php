@@ -5,7 +5,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class EventWaitlist extends Model
 {
-    protected $table = 'event_waitlist';
+    protected $table = 'event_waitlists';
 
     protected $fillable = [
         'event_id',

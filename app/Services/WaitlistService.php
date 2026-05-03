@@ -1,44 +1,46 @@
 <?php
+// app/Services/WaitlistService.php
+
 namespace App\Services;
 
 use App\Models\Event;
 use App\Models\EventWaitlist;
-use App\Models\User;
+use App\Notifications\PlaceDisponibleNotification;
+use App\Notifications\RangMisAJourNotification;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class WaitlistService
 {
     /**
-     * Promouvoir le premier de la liste d'attente après une annulation.
-     * Appelé depuis InscriptionController::destroy() dans une transaction.
+     * Promouvoir le premier de la liste d'attente après une annulation,
+     * puis envoyer l'email de notification à l'étudiant promu.
      */
     public function promouvoirPremier(Event $event): ?EventWaitlist
     {
-        // Récupérer le premier en liste (rang le plus bas, statut en_attente)
         $premier = EventWaitlist::where('event_id', $event->id)
                                 ->where('statut', 'en_attente')
                                 ->orderBy('position')
-                                ->lockForUpdate()   // évite les race conditions
+                                ->lockForUpdate()
                                 ->first();
 
         if (!$premier) {
-            Log::info("WaitlistService: aucune personne en attente pour l'event #{$event->id}");
+            Log::info("WaitlistService: aucune personne en attente pour event #{$event->id}");
             return null;
         }
 
         DB::transaction(function () use ($event, $premier) {
+
             // 1. Inscrire l'utilisateur promu dans event_user
             $event->participants()->syncWithoutDetaching([$premier->user_id]);
 
-            // 2. Décrémenter places_disponibles (elle vient d'être libérée puis ré-attribuée)
-            //    Note : l'increment a déjà été fait dans destroy(), on le remet à 0
+            // 2. Consommer la place libérée
             $event->decrement('places_disponibles');
 
-            // 3. Marquer l'entrée en liste comme promue
+            // 3. Marquer l'entrée comme promue
             $premier->update([
-                'statut'      => 'promu',
-                'notifie_at'  => now(),
+                'statut'     => 'promu',
+                'notifie_at' => now(),
             ]);
 
             // 4. Réindexer les positions des suivants
@@ -47,9 +49,35 @@ class WaitlistService
                          ->where('position', '>', $premier->position)
                          ->decrement('position');
 
-            Log::info("WaitlistService: user #{$premier->user_id} promu pour event #{$event->id}");
+            // 5. Envoyer l'email de notification à l'étudiant promu (en queue)
+            $user = $premier->user;
+            if ($user) {
+                $user->notify(new PlaceDisponibleNotification($event));
+                Log::info("WaitlistService: email envoyé à user #{$user->id} pour event #{$event->id}");
+            }
         });
 
         return $premier->fresh();
+    }
+
+    /**
+     * Notifier in-app tous les membres de la liste d'attente
+     * de leur nouveau rang après une réindexation.
+     */
+    public function notifierChangementRang(Event $event): void
+    {
+        $enAttente = EventWaitlist::where('event_id', $event->id)
+                                  ->where('statut', 'en_attente')
+                                  ->orderBy('position')
+                                  ->with('user')
+                                  ->get();
+
+        foreach ($enAttente as $entry) {
+            if ($entry->user) {
+                $entry->user->notify(
+                    new RangMisAJourNotification($event, $entry->position)
+                );
+            }
+        }
     }
 }

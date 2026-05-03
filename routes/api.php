@@ -6,6 +6,8 @@ use App\Http\Controllers\RoleRequestController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\ClubController;
 use App\Http\Controllers\EventController;
+use App\Http\Controllers\InscriptionController;
+
 
 use Illuminate\Support\Facades\Route;
 
