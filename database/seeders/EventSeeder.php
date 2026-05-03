@@ -26,7 +26,7 @@ class EventSeeder extends Seeder
                 'lieu' => 'Amphi A',
                 'categorie' => 'Conférence',
                 'club_id' => $clubs->where('nom', 'Club Tech & Innovation')->first()->id ?? $clubs->first()->id,
-                'places_disponibles' => 50,
+                'places_disponibles' => 1,
             ],
             [
                 'titre' => 'Hackathon 24h',

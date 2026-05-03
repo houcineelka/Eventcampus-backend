@@ -122,7 +122,7 @@ class EventController extends Controller
 
         if ($detailed) {
             $data['club_members_count'] = $event->club?->membres()->count() ?? 0;
-            $data['club_events_count']  = $event->club?->events()->count() ?? 0;
+            $data['club_events_count']  = $event->club?->evenements()->count() ?? 0;
             
             
             // NOUVEAU — Branche 3 : Détails de la liste d'attente pour la vue détaillée
