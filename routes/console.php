@@ -9,3 +9,8 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote');
 
 Schedule::command('rappel:send')->dailyAt('08:00');
+// Planification optionnelle
+Schedule::command('waitlist:repair')
+         ->dailyAt('02:00')
+         ->withoutOverlapping()
+         ->runInBackground();
