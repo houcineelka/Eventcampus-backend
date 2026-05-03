@@ -76,57 +76,60 @@ class InscriptionController extends Controller
             ], 201);
         });
     }
-
+    
     /**
      * DELETE /api/events/{id}/inscriptions
-     * Annule l'inscription de l'étudiant.
-     * (Le mécanisme de promotion est géré dans la branche 4)
+     * Annule l'inscription ou quitte la liste d'attente.
      */
+
     public function destroy(int $id): JsonResponse
-    {
-        $event = Event::findOrFail($id);
-        $user  = Auth::user();
+        {
+            $event   = Event::findOrFail($id);
+            $user    = Auth::user();
+            $service = app(WaitlistService::class);
 
-        // Quitter la liste d'attente ?
-        $waitlistEntry = EventWaitlist::where('event_id', $event->id)
-                                      ->where('user_id', $user->id)
-                                      ->where('statut', 'en_attente')
-                                      ->first();
+            // ── Cas 1 : quitter la liste d'attente ──────────────────────────
+            $waitlistEntry = EventWaitlist::where('event_id', $event->id)
+                                        ->where('user_id', $user->id)
+                                        ->where('statut', 'en_attente')
+                                        ->first();
 
-        if ($waitlistEntry) {
-            return DB::transaction(function () use ($event, $user, $waitlistEntry) {
-                $rangQuitte = $waitlistEntry->position;
-                $waitlistEntry->update(['statut' => 'annule']);
+            if ($waitlistEntry) {
+                return DB::transaction(function () use ($event, $waitlistEntry) {
+                    $rang = $waitlistEntry->position;
+                    $waitlistEntry->update(['statut' => 'annule']);
 
-                // Réindexer les rangs suivants
-                EventWaitlist::where('event_id', $event->id)
-                             ->where('statut', 'en_attente')
-                             ->where('position', '>', $rangQuitte)
-                             ->decrement('position');
+                    // Réindexer les rangs suivants
+                    EventWaitlist::where('event_id', $event->id)
+                                ->where('statut', 'en_attente')
+                                ->where('position', '>', $rang)
+                                ->decrement('position');
+
+                    return response()->json([
+                        'message' => 'Vous avez quitté la liste d\'attente.',
+                        'statut'  => 'quitte_attente',
+                    ]);
+                });
+            }
+
+            // ── Cas 2 : annuler une inscription confirmée ───────────────────
+            if (!$event->estInscrit($user->id)) {
+                return response()->json(['message' => 'Vous n\'êtes pas inscrit à cet événement.'], 404);
+            }
+
+            return DB::transaction(function () use ($event, $user, $service) {
+                // Retirer l'inscrit
+                $event->participants()->detach($user->id);
+                $event->increment('places_disponibles');
+
+                // Automatiquement promouvoir le premier de la liste
+                $promu = $service->promouvoirPremier($event);
 
                 return response()->json([
-                    'message' => 'Vous avez quitté la liste d\'attente.',
-                    'statut'  => 'quitte_attente',
+                    'message'        => 'Votre inscription a été annulée.',
+                    'statut'         => 'annule',
+                    'promu_user_id'  => $promu?->user_id,
                 ]);
             });
         }
-
-        // Annuler une inscription confirmée
-        if (!$event->estInscrit($user->id)) {
-            return response()->json(['message' => 'Vous n\'êtes pas inscrit à cet événement.'], 404);
-        }
-
-        return DB::transaction(function () use ($event, $user) {
-            $event->participants()->detach($user->id);
-            $event->increment('places_disponibles');
-
-            // La promotion du premier de liste est déclenchée ici (branche 4)
-            // app(WaitlistService::class)->promouvoirPremier($event);
-
-            return response()->json([
-                'message' => 'Votre inscription a été annulée.',
-                'statut'  => 'annule',
-            ]);
-        });
-    }
 }
