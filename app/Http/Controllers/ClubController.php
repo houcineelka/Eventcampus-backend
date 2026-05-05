@@ -53,6 +53,30 @@ class ClubController extends Controller
 
 
     /**
+     * GET /api/profil/clubs
+     */
+    public function mesClubs(Request $request)
+    {
+        $userId = $request->user()->id;
+
+        $clubs = Club::withCount('membres')
+            ->whereHas('membres', fn($q) => $q->where('user_id', $userId))
+            ->latest()
+            ->get()
+            ->map(fn($club) => [
+                'id'            => $club->id,
+                'nom'           => $club->nom,
+                'description'   => $club->description,
+                'categorie'     => $club->categorie,
+                'emoji'         => $club->emoji,
+                'membres_count' => $club->membres_count,
+                'is_member'     => true,
+            ]);
+
+        return response()->json($clubs);
+    }
+
+    /**
      * POST /api/adhesions
      */
     public function adherer(Request $request)
