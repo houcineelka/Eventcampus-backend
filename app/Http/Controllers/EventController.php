@@ -86,6 +86,40 @@ class EventController extends Controller
     }
 
     /**
+     * GET /api/organiser/events
+     */
+    public function mesEvenements()
+    {
+        $user = auth('api')->user();
+
+        $events = Event::with('club')
+            ->whereHas('club', fn($q) => $q->where('createur_id', $user->id))
+            ->latest()
+            ->get()
+            ->map(fn($event) => $this->formatEvent($event, false));
+
+        return response()->json($events);
+    }
+
+    /**
+     * DELETE /api/events/{id}
+     */
+    public function destroy($id)
+    {
+        $event = Event::findOrFail($id);
+        $user  = auth('api')->user();
+
+        // Seul l'organisateur du club propriétaire peut supprimer
+        if ($event->club->createur_id !== $user->id) {
+            return response()->json(['message' => 'Action non autorisée.'], 403);
+        }
+
+        $event->delete();
+
+        return response()->json(['message' => 'Événement supprimé avec succès.']);
+    }
+
+    /**
      * GET /api/events/{id}/inscrits
      */
     public function inscrits($id)
