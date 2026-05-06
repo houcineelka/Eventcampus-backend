@@ -86,6 +86,28 @@ class EventController extends Controller
     }
 
     /**
+     * GET /api/events/{id}/inscrits
+     */
+    public function inscrits($id)
+    {
+        $event = Event::findOrFail($id);
+
+        $inscrits = $event->participants()
+            ->select('users.id', 'users.name', 'users.email')
+            ->withPivot('created_at')
+            ->orderBy('event_user.created_at')
+            ->get()
+            ->map(fn($u) => [
+                'id'         => $u->id,
+                'name'       => $u->name,
+                'email'      => $u->email,
+                'inscrit_le' => $u->pivot->created_at,
+            ]);
+
+        return response()->json($inscrits);
+    }
+
+    /**
      * Formate l'événement pour la réponse JSON
      */
     private function formatEvent(Event $event, bool $detailed = false): array
