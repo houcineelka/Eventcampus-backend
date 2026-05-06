@@ -32,6 +32,8 @@ Route::middleware('auth:api')->group(function () {
     Route::get('/events',                  [EventController::class, 'index']);
     Route::get('/events/{id}',             [EventController::class, 'show']);
     Route::get('/events/{id}/inscrits',    [EventController::class, 'inscrits']);
+    Route::delete('/events/{id}',          [EventController::class, 'destroy']);
+    Route::get('/organiser/events',        [EventController::class, 'mesEvenements']);
     Route::post('/inscriptions',           [EventController::class, 'inscrire']);
    
     // Inscriptions 
