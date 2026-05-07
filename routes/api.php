@@ -23,6 +23,7 @@ Route::middleware('auth:api')->group(function () {
     Route::patch('/users/me/preferences', [UserController::class, 'updatePreferences']);
 
      // Clubs
+    Route::post('/clubs',             [ClubController::class, 'store']);
     Route::get('/clubs',              [ClubController::class, 'index']);
     Route::get('/clubs/{id}',         [ClubController::class, 'show']);
     Route::get('/profil/clubs',       [ClubController::class, 'mesClubs']);
