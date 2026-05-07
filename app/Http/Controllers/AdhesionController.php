@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Adhesion;
 use App\Models\Club;
+use App\Notifications\AdhesionAccepteeNotification;
 use Illuminate\Http\Request;
 
 class AdhesionController extends Controller
@@ -53,6 +54,8 @@ class AdhesionController extends Controller
         $club->membres()->syncWithoutDetaching([
             $adhesion->user_id => ['role' => 'membre']
         ]);
+
+        $adhesion->user->notify(new AdhesionAccepteeNotification($club));
 
         return response()->json([
             'message'  => 'Demande d\'adhésion acceptée avec succès.',
