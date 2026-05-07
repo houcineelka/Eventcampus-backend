@@ -47,4 +47,15 @@ class User extends Authenticatable implements JWTSubject
             'role' => $this->role,
         ];
     }
+
+    public function eventParticipations()
+    {
+        return $this->belongsToMany(Event::class, 'event_user')
+                    ->withTimestamps();
+    }
+
+public function waitlistEntries()
+    {
+        return $this->hasMany(EventWaitlist::class);
+    }
 }
