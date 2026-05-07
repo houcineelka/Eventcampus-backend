@@ -19,7 +19,13 @@ class ClubController extends Controller
             'description' => 'required|string',
             'categorie'   => 'required|string|max:100',
             'emoji'       => 'nullable|string|max:10',
+            'logo'        => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
         ]);
+
+        $logoPath = null;
+        if ($request->hasFile('logo')) {
+            $logoPath = $request->file('logo')->store('logos', 'public');
+        }
 
         $club = Club::create([
             'nom'         => $request->nom,
@@ -28,7 +34,10 @@ class ClubController extends Controller
             'emoji'       => $request->emoji ?? '🎓',
             'createur_id' => $request->user()->id,
             'statut'      => 'en_attente',
+            'logo'        => $logoPath,
         ]);
+
+        $club->logo_url = $logoPath ? asset('storage/' . $logoPath) : null;
 
         return response()->json([
             'message' => 'Club créé avec succès. Il est en attente de validation.',

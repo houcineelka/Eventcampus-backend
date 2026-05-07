@@ -14,6 +14,7 @@ class Club extends Model
         'emoji',
         'createur_id',
         'statut',
+        'logo',
     ];
 
     // Relations
