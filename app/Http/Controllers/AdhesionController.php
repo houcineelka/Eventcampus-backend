@@ -1,0 +1,62 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Adhesion;
+use App\Models\Club;
+use Illuminate\Http\Request;
+
+class AdhesionController extends Controller
+{
+    public function store(Request $request)
+    {
+        $request->validate([
+            'club_id' => 'required|exists:clubs,id',
+        ]);
+
+        $userId = $request->user()->id;
+        $clubId = $request->club_id;
+
+        $existing = Adhesion::where('user_id', $userId)->where('club_id', $clubId)->first();
+
+        if ($existing) {
+            return response()->json(['message' => 'Vous avez déjà une demande en cours pour ce club.'], 409);
+        }
+
+        $adhesion = Adhesion::create([
+            'user_id' => $userId,
+            'club_id' => $clubId,
+            'statut'  => 'en_attente',
+        ]);
+
+        return response()->json([
+            'message'  => 'Demande d\'adhésion envoyée avec succès. En attente de validation.',
+            'adhesion' => $adhesion,
+        ], 201);
+    }
+
+    public function accepter(Request $request, $id)
+    {
+        $adhesion = Adhesion::findOrFail($id);
+        $club = Club::findOrFail($adhesion->club_id);
+
+        if ($club->createur_id !== $request->user()->id) {
+            return response()->json(['message' => 'Vous n\'êtes pas autorisé à accepter cette demande.'], 403);
+        }
+
+        if ($adhesion->statut !== 'en_attente') {
+            return response()->json(['message' => 'Cette demande a déjà été traitée.'], 409);
+        }
+
+        $adhesion->update(['statut' => 'accepté']);
+
+        $club->membres()->syncWithoutDetaching([
+            $adhesion->user_id => ['role' => 'membre']
+        ]);
+
+        return response()->json([
+            'message'  => 'Demande d\'adhésion acceptée avec succès.',
+            'adhesion' => $adhesion,
+        ]);
+    }
+}

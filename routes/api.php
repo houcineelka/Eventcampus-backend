@@ -4,10 +4,11 @@ use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\UserController;
 use App\Http\Controllers\RoleRequestController;
 use App\Http\Controllers\StudentController;
+use App\Http\Controllers\AdhesionController;
 use App\Http\Controllers\ClubController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\InscriptionController;
-use App\Http\Controllers\ProfilController; 
+use App\Http\Controllers\ProfilController;
 
 
 use Illuminate\Support\Facades\Route;
@@ -27,8 +28,9 @@ Route::middleware('auth:api')->group(function () {
     Route::get('/clubs',              [ClubController::class, 'index']);
     Route::get('/clubs/{id}',         [ClubController::class, 'show']);
     Route::get('/profil/clubs',       [ClubController::class, 'mesClubs']);
-    Route::post('/adhesions',         [ClubController::class, 'adherer']);
-    Route::post('/clubs/{id}/leave',  [ClubController::class, 'leave']);
+    Route::post('/adhesions',                    [AdhesionController::class, 'store']);
+    Route::put('/adhesions/{id}/accepter',       [AdhesionController::class, 'accepter']);
+    Route::post('/clubs/{id}/leave',             [ClubController::class, 'leave']);
 
     // Events
     Route::get('/events',                  [EventController::class, 'index']);
