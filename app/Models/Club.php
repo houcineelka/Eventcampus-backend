@@ -13,6 +13,7 @@ class Club extends Model
         'categorie',
         'emoji',
         'createur_id',
+        'statut',
     ];
 
     // Relations

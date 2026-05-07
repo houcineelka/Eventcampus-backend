@@ -10,6 +10,33 @@ use Illuminate\Http\Request;
 class ClubController extends Controller
 {
     /**
+     * POST /api/clubs
+     */
+    public function store(Request $request)
+    {
+        $request->validate([
+            'nom'         => 'required|string|max:255',
+            'description' => 'required|string',
+            'categorie'   => 'required|string|max:100',
+            'emoji'       => 'nullable|string|max:10',
+        ]);
+
+        $club = Club::create([
+            'nom'         => $request->nom,
+            'description' => $request->description,
+            'categorie'   => $request->categorie,
+            'emoji'       => $request->emoji ?? '🎓',
+            'createur_id' => $request->user()->id,
+            'statut'      => 'en_attente',
+        ]);
+
+        return response()->json([
+            'message' => 'Club créé avec succès. Il est en attente de validation.',
+            'club'    => $club,
+        ], 201);
+    }
+
+    /**
      * GET /api/clubs
      */
     public function index(Request $request)
