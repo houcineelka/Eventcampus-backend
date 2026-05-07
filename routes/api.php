@@ -7,6 +7,7 @@ use App\Http\Controllers\StudentController;
 use App\Http\Controllers\ClubController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\InscriptionController;
+use App\Http\Controllers\ProfilController; 
 
 
 use Illuminate\Support\Facades\Route;
@@ -39,6 +40,8 @@ Route::middleware('auth:api')->group(function () {
     // Inscriptions 
     Route::post('/events/{id}/inscriptions', [InscriptionController::class, 'store']);
     Route::delete('/events/{id}/inscriptions', [InscriptionController::class, 'destroy']);
+    //Profil
+    Route::get('/profil/inscriptions', [ProfilController::class, 'inscriptions']);
 
     Route::middleware('role:etudiant')->group(function () {
         Route::get('/student/dashboard', [StudentController::class, 'dashboard']);
