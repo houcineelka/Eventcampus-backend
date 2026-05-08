@@ -69,15 +69,23 @@ class ClubController extends Controller
     /**
      * GET /api/clubs/{id}
      */
- public function show(Request $request, $id)
+    public function show(Request $request, $id)
 {
     $club = Club::with([
             'membres' => function($q) {
                 $q->select('users.id', 'prenom', 'nom')
                   ->withPivot('role');
-            }
+            },
+            //événements à venir du club
+            'evenements' => function($q) {
+                $q->where('date', '>=', now()->toDateString())
+                  ->orderBy('date', 'asc')
+                  ->orderBy('heure', 'asc')
+                  ->select('id', 'titre', 'date', 'heure', 'lieu', 'categorie', 'club_id')
+                  ->limit(5);
+            },
         ])
-        ->withCount('membres')
+        ->withCount(['membres', 'evenements']) 
         ->findOrFail($id);
 
     $club->is_member = $club->membres
