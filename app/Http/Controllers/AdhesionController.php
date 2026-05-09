@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Adhesion;
 use App\Models\Club;
 use App\Notifications\AdhesionAccepteeNotification;
+use App\Notifications\AdhesionRefuseeNotification;
 use Illuminate\Http\Request;
 
 class AdhesionController extends Controller
@@ -77,6 +78,8 @@ class AdhesionController extends Controller
         }
 
         $adhesion->update(['statut' => 'refusé']);
+
+        $adhesion->user->notify(new AdhesionRefuseeNotification($club));
 
         return response()->json([
             'message'  => 'Demande d\'adhésion refusée.',
