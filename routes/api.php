@@ -31,6 +31,7 @@ Route::middleware('auth:api')->group(function () {
     Route::get('/adhesions',                     [AdhesionController::class, 'index']);
     Route::post('/adhesions',                    [AdhesionController::class, 'store']);
     Route::put('/adhesions/{id}/accepter',       [AdhesionController::class, 'accepter']);
+    Route::put('/adhesions/{id}/refuser',        [AdhesionController::class, 'refuser']);
     Route::post('/clubs/{id}/leave',             [ClubController::class, 'leave']);
 
     // Events
