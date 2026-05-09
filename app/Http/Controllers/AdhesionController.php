@@ -62,4 +62,45 @@ class AdhesionController extends Controller
             'adhesion' => $adhesion,
         ]);
     }
+
+    /**
+     * List adhesions.
+     * - Organiser/admin: returns adhesions for clubs they created.
+     * - Others: returns adhesions made by the current user.
+     * Query params:
+     *  - statut: pending|accepted|refused
+     */
+    public function index(Request $request)
+    {
+        $user = $request->user();
+        $statut = $request->query('statut');
+
+        $map = [
+            'pending'  => 'en_attente',
+            'accepted' => 'accepté',
+            'refused'  => 'refusé',
+        ];
+
+        if ($statut && isset($map[$statut])) {
+            $statut = $map[$statut];
+        } else {
+            $statut = null;
+        }
+
+        if (in_array($user->role, ['organisateur', 'admin'])) {
+            $query = Adhesion::whereHas('club', function ($q) use ($user) {
+                $q->where('createur_id', $user->id);
+            });
+        } else {
+            $query = Adhesion::where('user_id', $user->id);
+        }
+
+        if ($statut) {
+            $query->where('statut', $statut);
+        }
+
+        $adhesions = $query->with(['user:id,prenom,nom,name,email', 'club:id,nom,createur_id'])->get();
+
+        return response()->json(['adhesions' => $adhesions]);
+    }
 }
