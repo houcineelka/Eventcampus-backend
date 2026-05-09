@@ -28,6 +28,7 @@ Route::middleware('auth:api')->group(function () {
     Route::get('/clubs',              [ClubController::class, 'index']);
     Route::get('/clubs/{id}',         [ClubController::class, 'show']);
     Route::get('/profil/clubs',       [ClubController::class, 'mesClubs']);
+    Route::get('/adhesions',                     [AdhesionController::class, 'index']);
     Route::post('/adhesions',                    [AdhesionController::class, 'store']);
     Route::put('/adhesions/{id}/accepter',       [AdhesionController::class, 'accepter']);
     Route::post('/clubs/{id}/leave',             [ClubController::class, 'leave']);
