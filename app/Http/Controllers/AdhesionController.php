@@ -63,6 +63,27 @@ class AdhesionController extends Controller
         ]);
     }
 
+    public function refuser(Request $request, $id)
+    {
+        $adhesion = Adhesion::findOrFail($id);
+        $club = Club::findOrFail($adhesion->club_id);
+
+        if ($club->createur_id !== $request->user()->id) {
+            return response()->json(['message' => 'Vous n\'êtes pas autorisé à refuser cette demande.'], 403);
+        }
+
+        if ($adhesion->statut !== 'en_attente') {
+            return response()->json(['message' => 'Cette demande a déjà été traitée.'], 409);
+        }
+
+        $adhesion->update(['statut' => 'refusé']);
+
+        return response()->json([
+            'message'  => 'Demande d\'adhésion refusée.',
+            'adhesion' => $adhesion,
+        ]);
+    }
+
     /**
      * List adhesions.
      * - Organiser/admin: returns adhesions for clubs they created.
