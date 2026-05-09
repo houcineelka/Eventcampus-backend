@@ -11,6 +11,7 @@ use App\Http\Controllers\InscriptionController;
 use App\Http\Controllers\ProfilController;
 
 
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::post('/register', [AuthController::class, 'register']);
@@ -47,6 +48,9 @@ Route::middleware('auth:api')->group(function () {
     Route::delete('/events/{id}/inscriptions', [InscriptionController::class, 'destroy']);
     //Profil
     Route::get('/profil/inscriptions', [ProfilController::class, 'inscriptions']);
+    Route::get('/notifications', function (Request $request) {
+        return response()->json($request->user()->notifications);
+    });
 
     Route::middleware('role:etudiant')->group(function () {
         Route::get('/student/dashboard', [StudentController::class, 'dashboard']);
