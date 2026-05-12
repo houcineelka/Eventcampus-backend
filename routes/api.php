@@ -9,6 +9,7 @@ use App\Http\Controllers\ClubController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\InscriptionController;
 use App\Http\Controllers\ProfilController;
+use App\Http\Controllers\MessageController;
 
 
 use Illuminate\Http\Request;
@@ -34,6 +35,21 @@ Route::middleware('auth:api')->group(function () {
     Route::put('/adhesions/{id}/accepter',       [AdhesionController::class, 'accepter']);
     Route::put('/adhesions/{id}/refuser',        [AdhesionController::class, 'refuser']);
     Route::post('/clubs/{id}/leave',             [ClubController::class, 'leave']);
+    Route::get('/clubs/{id}/messages',           [MessageController::class, 'index']);
+    Route::post('/clubs/{id}/messages',          [MessageController::class, 'store']);
+
+    // Conversations & Messages
+    Route::prefix('messages')->group(function () {
+        Route::get('/conversations', [MessageController::class, 'getConversations']);
+        Route::post('/conversations', [MessageController::class, 'createConversation']);
+        Route::get('/conversations/{conversationId}', [MessageController::class, 'getMessages']);
+        Route::post('/conversations/{conversationId}/send', [MessageController::class, 'sendMessage']);
+        Route::post('/broadcast', [MessageController::class, 'sendBroadcastMessage']);
+        Route::post('/start/{member}', [MessageController::class, 'startIndividualConversation']);
+        Route::get('/received', [MessageController::class, 'getReceivedMessages']);
+        Route::put('/{messageId}/read', [MessageController::class, 'markMessageAsRead']);
+        Route::get('/search-members', [MessageController::class, 'searchMembers']);
+    });
 
     // Events
     Route::get('/events',                  [EventController::class, 'index']);
@@ -48,6 +64,7 @@ Route::middleware('auth:api')->group(function () {
     Route::delete('/events/{id}/inscriptions', [InscriptionController::class, 'destroy']);
     //Profil
     Route::get('/profil/inscriptions', [ProfilController::class, 'inscriptions']);
+    Route::get('/messages', [MessageController::class, 'userMessages']);
     Route::get('/notifications', function (Request $request) {
         return response()->json($request->user()->notifications);
     });

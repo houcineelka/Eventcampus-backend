@@ -59,4 +59,20 @@ public function waitlistEntries()
     {
         return $this->hasMany(EventWaitlist::class);
     }
+
+    public function messagesSent()
+    {
+        return $this->hasMany(Message::class, 'user_id');
+    }
+
+    public function conversations()
+    {
+        return $this->belongsToMany(Conversation::class, 'conversation_user')
+                    ->withTimestamps();
+    }
+
+    public function receivedMessages()
+    {
+        return $this->hasMany(Message::class, 'receiver_id');
+    }
 }
