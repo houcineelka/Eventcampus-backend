@@ -22,6 +22,8 @@ class Event extends Model
         'club_id',
         'places_disponibles',
         'capacite_max',
+        'statut',
+        'user_id',
     ];
 
     protected $appends = ['inscrits', 'est_complet'];

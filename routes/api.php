@@ -30,6 +30,7 @@ Route::middleware('auth:api')->group(function () {
     Route::get('/clubs',              [ClubController::class, 'index']);
     Route::get('/clubs/{id}',         [ClubController::class, 'show']);
     Route::get('/profil/clubs',       [ClubController::class, 'mesClubs']);
+    Route::get('/organiser/clubs',    [ClubController::class, 'mesClubsCreated']);
     Route::get('/adhesions',                     [AdhesionController::class, 'index']);
     Route::post('/adhesions',                    [AdhesionController::class, 'store']);
     Route::put('/adhesions/{id}/accepter',       [AdhesionController::class, 'accepter']);
@@ -52,6 +53,7 @@ Route::middleware('auth:api')->group(function () {
     });
 
     // Events
+    Route::post('/events',                 [EventController::class, 'store']);
     Route::get('/events',                  [EventController::class, 'index']);
     Route::get('/events/{id}',             [EventController::class, 'show']);
     Route::get('/events/{id}/inscrits',    [EventController::class, 'inscrits']);
