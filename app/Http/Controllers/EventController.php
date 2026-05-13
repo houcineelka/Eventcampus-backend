@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Event;
+use App\Http\Requests\StoreEventRequest;
 use App\Notifications\NouvelleInscriptionNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -99,6 +100,35 @@ class EventController extends Controller
             ->map(fn($event) => $this->formatEvent($event, false));
 
         return response()->json($events);
+    }
+
+    /**
+     * POST /api/events
+     */
+    public function store(StoreEventRequest $request)
+    {
+        $event = Event::create([
+            'titre' => $request->validated()['titre'],
+            'description' => $request->validated()['description'],
+            'date' => $request->validated()['date'],
+            'heure' => $request->validated()['heure'],
+            'date_fin' => $request->validated()['date_fin'],
+            'heure_fin' => $request->validated()['heure_fin'],
+            'lieu' => $request->validated()['lieu'],
+            'categorie' => $request->validated()['categorie'],
+            'club_id' => $request->validated()['club_id'],
+            'capacite_max' => $request->validated()['capacite_max'],
+            'places_disponibles' => $request->validated()['capacite_max'],
+            'statut' => 'En attente',
+            'user_id' => auth()->id(),
+        ]);
+
+        $event->load('club');
+
+        return response()->json(
+            $this->formatEvent($event, false),
+            201
+        );
     }
 
     /**

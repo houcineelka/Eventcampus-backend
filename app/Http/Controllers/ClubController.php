@@ -121,6 +121,30 @@ class ClubController extends Controller
     }
 
     /**
+     * GET /api/organiser/clubs
+     * Get all clubs created by the authenticated organizer
+     */
+    public function mesClubsCreated(Request $request)
+    {
+        $userId = $request->user()->id;
+
+        $clubs = Club::withCount('membres')
+            ->where('createur_id', $userId)
+            ->latest()
+            ->get()
+            ->map(fn($club) => [
+                'id'            => $club->id,
+                'nom'           => $club->nom,
+                'description'   => $club->description,
+                'categorie'     => $club->categorie,
+                'emoji'         => $club->emoji,
+                'membres_count' => $club->membres_count,
+            ]);
+
+        return response()->json($clubs);
+    }
+
+    /**
      * POST /api/adhesions
      */
     public function adherer(Request $request)
