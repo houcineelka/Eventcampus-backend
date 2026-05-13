@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Event;
 use App\Http\Requests\StoreEventRequest;
+use App\Http\Requests\UpdateEventRequest;
 use App\Notifications\NouvelleInscriptionNotification;
+use App\Notifications\EvenementModifieNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -150,6 +152,49 @@ class EventController extends Controller
     }
 
     /**
+     * PUT /api/events/{id}
+     */
+    public function update(UpdateEventRequest $request, $id)
+    {
+        $event = Event::findOrFail($id);
+
+        // Update all fields with validated data
+        $event->update($request->validated());
+
+        // Reset status to En attente
+        $event->update(['statut' => 'En attente']);
+
+        // Load relationships for response
+        $event->load('club');
+
+        // Notify club creator
+        $event->club->createur->notify(new EvenementModifieNotification($event));
+
+        $inscrits = $event->participants()->count();
+        $estComplet = $event->capacite_max ? ($inscrits >= $event->capacite_max) : false;
+
+        return response()->json([
+            'id' => $event->id,
+            'titre' => $event->titre,
+            'description' => $event->description,
+            'date' => $event->date,
+            'heure' => $event->heure,
+            'date_fin' => $event->date_fin,
+            'heure_fin' => $event->heure_fin,
+            'lieu' => $event->lieu,
+            'categorie' => $event->categorie,
+            'club_id' => $event->club_id,
+            'capacite_max' => $event->capacite_max,
+            'places_disponibles' => $event->places_disponibles,
+            'inscrits' => $inscrits,
+            'est_complet' => $estComplet,
+            'statut' => $event->statut,
+            'created_at' => $event->created_at?->toIso8601String(),
+            'updated_at' => $event->updated_at?->toIso8601String(),
+        ], 200);
+    }
+
+    /**
      * GET /api/events/{id}/inscrits
      */
     public function inscrits($id)
@@ -196,6 +241,8 @@ class EventController extends Controller
             'places_disponibles'  => $event->places_disponibles,
             'capacite_max'        => $event->capacite_max,
             'inscrits'            => $event->inscrits ?? $event->participants()->count(),
+            'est_complet'         => ($event->capacite_max && $event->participants()->count() >= $event->capacite_max) ? true : false,
+            'statut'              => $event->statut,
             'club_id'             => $event->club_id,
             'club_name'           => $event->club?->nom,
             // Statut de l'utilisateur connecté
