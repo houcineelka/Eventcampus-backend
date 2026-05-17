@@ -95,8 +95,10 @@ Route::middleware('auth:api')->group(function () {
         Route::get('/users/{user}', [AdminUserController::class, 'show']);
         Route::put('/users/{user}', [AdminUserController::class, 'update']);
         Route::patch('/users/{user}/role', [AdminUserController::class, 'updateRole']);
-        Route::post('/users/{user}/ban', [AdminUserController::class, 'ban']);
-        Route::post('/users/{user}/unban', [AdminUserController::class, 'unban']);
+        Route::post('/users/{user}/ban',         [AdminUserController::class, 'ban']);
+        Route::post('/users/{user}/unban',       [AdminUserController::class, 'unban']);
+        Route::put('/users/{user}/activate',     [AdminUserController::class, 'unban']);
+        Route::put('/users/{user}/deactivate',   [AdminUserController::class, 'ban']);
         Route::delete('/users/{user}', [AdminUserController::class, 'destroy']);
 
         //
