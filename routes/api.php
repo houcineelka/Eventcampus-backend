@@ -12,6 +12,7 @@ use App\Http\Controllers\InscriptionController;
 use App\Http\Controllers\ProfilController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\Admin\StatsController;
+use App\Http\Controllers\GoogleCalendarController;
 
 
 use Illuminate\Http\Request;
@@ -76,6 +77,11 @@ Route::middleware('auth:api')->group(function () {
     Route::get('/notifications', function (Request $request) {
         return response()->json($request->user()->notifications);
     });
+
+    // Google Calendar
+    Route::get('/google/calendar/auth-url',  [GoogleCalendarController::class, 'authUrl']);
+    Route::get('/google/calendar/status',    [GoogleCalendarController::class, 'status']);
+    Route::delete('/google/calendar/disconnect', [GoogleCalendarController::class, 'disconnect']);
 
     Route::middleware('role:etudiant')->group(function () {
         Route::get('/student/dashboard', [StudentController::class, 'dashboard']);
