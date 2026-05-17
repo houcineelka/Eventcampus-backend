@@ -39,6 +39,32 @@ class UserController extends Controller
         ]);
     }
 
+    public function deactivateRole(Request $request, $id, $role)
+    {
+        $allowed = ['etudiant', 'organisateur', 'admin'];
+
+        if (!in_array($role, $allowed)) {
+            return response()->json(['message' => 'Rôle invalide.'], 422);
+        }
+
+        $user = User::findOrFail($id);
+
+        if ($user->role !== $role) {
+            return response()->json(['message' => 'L\'utilisateur n\'a pas ce rôle.'], 409);
+        }
+
+        $user->update(['role' => 'etudiant']);
+
+        // EP-173 — invalider le token JWT de l'utilisateur
+        auth('api')->setUser($user);
+        auth('api')->invalidate(true);
+
+        return response()->json([
+            'message' => "Rôle désactivé. L'utilisateur a été rétabli en tant qu'étudiant.",
+            'user'    => $user->fresh(),
+        ]);
+    }
+
     public function updatePreferences(Request $request)
     {
         $request->validate([
