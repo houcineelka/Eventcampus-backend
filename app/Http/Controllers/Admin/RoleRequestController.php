@@ -29,13 +29,13 @@ class RoleRequestController extends Controller
         $user = $roleRequest->user;
         $user->update(['role' => 'organisateur']);
 
-        /* EP-152 : notification
+        //notification
         $user->notify(new RoleRequestResultNotification('approved'));
 
         return response()->json([
             'message' => 'Demande approuvée. L\'utilisateur est maintenant organisateur.',
             'role_request' => $roleRequest->fresh(),
-        ]); */
+        ]); 
     }
 
     public function refuse(RoleRequest $roleRequest)
@@ -46,12 +46,12 @@ class RoleRequestController extends Controller
 
         $roleRequest->update(['status' => 'refused']);
 
-        /*EP-152 : notification
+        // notification
         $roleRequest->user->notify(new RoleRequestResultNotification('refused'));
 
         return response()->json([
             'message' => 'Demande refusée.',
             'role_request' => $roleRequest->fresh(),
-        ]); */
+        ]); 
     }
 }
