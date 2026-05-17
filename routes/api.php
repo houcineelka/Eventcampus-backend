@@ -77,6 +77,10 @@ Route::middleware('auth:api')->group(function () {
         Route::get('/student/dashboard', [StudentController::class, 'dashboard']);
     });
 
+    Route::middleware('role:admin')->group(function () {
+        Route::put('/users/{id}/roles/{role}/activate', [UserController::class, 'activateRole']);
+    });
+
     Route::prefix('admin')->middleware('role:admin')->group(function () {
         Route::get('/users/stats', [AdminUserController::class, 'stats']);
         Route::get('/users', [AdminUserController::class, 'index']);
