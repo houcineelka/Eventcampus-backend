@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Models\Event;
 use App\Services\WhatsAppService;
+use App\Services\WhatsAppTemplates;
 use Illuminate\Console\Command;
 use Illuminate\Support\Carbon;
 
@@ -36,13 +37,7 @@ class SendRappelWhatsApp extends Command
                     continue;
                 }
 
-                $message = "🎓 EventCampus — Rappel\n\n"
-                    . "Bonjour {$user->prenom},\n\n"
-                    . "Vous êtes inscrit à l'événement *{$event->titre}* demain.\n\n"
-                    . "📅 Date : " . Carbon::parse($event->date)->format('d/m/Y') . "\n"
-                    . "🕐 Heure : {$event->heure}\n"
-                    . "📍 Lieu : {$event->lieu}\n\n"
-                    . "À demain !";
+                $message = WhatsAppTemplates::rappelEvenement($user, $event);
 
                 try {
                     $whatsapp->send($user->phone, $message);
