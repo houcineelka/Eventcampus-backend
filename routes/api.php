@@ -105,8 +105,8 @@ Route::middleware('auth:api')->group(function () {
 
         // Clubs validation
         Route::get('/clubs/pending',         [AdminClubController::class, 'pending']);
-        Route::put('/clubs/{id}/approve',    [AdminClubController::class, 'approve']);
-        Route::put('/clubs/{id}/reject',     [AdminClubController::class, 'reject']);
+        Route::put('/clubs/{id}/valider',    [AdminClubController::class, 'valider']);
+        Route::put('/clubs/{id}/refuser',    [AdminClubController::class, 'refuser']);
         });
 
 

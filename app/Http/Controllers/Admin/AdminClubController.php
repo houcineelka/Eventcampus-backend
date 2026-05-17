@@ -35,23 +35,23 @@ class AdminClubController extends Controller
     }
 
     /**
-     * PUT /api/admin/clubs/{id}/approve
+     * PUT /api/admin/clubs/{id}/valider
      */
-    public function approve($id)
+    public function valider($id)
     {
         $club = Club::findOrFail($id);
-        $club->update(['statut' => 'approuve']);
+        $club->update(['statut' => 'validé']);
 
         return response()->json(['message' => 'Club approuvé avec succès.']);
     }
 
     /**
-     * PUT /api/admin/clubs/{id}/reject
+     * PUT /api/admin/clubs/{id}/refuser
      */
-    public function reject($id)
+    public function refuser($id)
     {
         $club = Club::findOrFail($id);
-        $club->update(['statut' => 'rejete']);
+        $club->update(['statut' => 'rejeté']);
 
         return response()->json(['message' => 'Club rejeté.']);
     }
