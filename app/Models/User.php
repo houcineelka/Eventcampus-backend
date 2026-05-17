@@ -20,6 +20,8 @@ class User extends Authenticatable implements JWTSubject
             'password',
             'role',
             'email_reminders',
+            'whatsapp_reminders',
+            'phone',
             'google_id',
             'google_calendar_token',
         ];

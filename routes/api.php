@@ -27,6 +27,7 @@ Route::middleware('auth:api')->group(function () {
     Route::get('/me', [UserController::class, 'me']);
     Route::post('/logout', [UserController::class, 'logout']);
     Route::patch('/users/me/preferences', [UserController::class, 'updatePreferences']);
+    Route::patch('/users/me/phone',       [UserController::class, 'updatePhone']);
 
      // Clubs
     Route::post('/clubs',             [ClubController::class, 'store']);
