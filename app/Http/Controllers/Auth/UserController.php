@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class UserController extends Controller
@@ -19,6 +20,23 @@ class UserController extends Controller
         auth('api')->logout();
 
         return response()->json(['message' => 'Déconnecté avec succès.']);
+    }
+
+    public function activateRole(Request $request, $id, $role)
+    {
+        $allowed = ['etudiant', 'organisateur', 'admin'];
+
+        if (!in_array($role, $allowed)) {
+            return response()->json(['message' => 'Rôle invalide.'], 422);
+        }
+
+        $user = User::findOrFail($id);
+        $user->update(['role' => $role]);
+
+        return response()->json([
+            'message' => "Rôle de l'utilisateur mis à jour avec succès.",
+            'user'    => $user,
+        ]);
     }
 
     public function updatePreferences(Request $request)
