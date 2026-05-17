@@ -22,7 +22,27 @@ class AdhesionController extends Controller
         $existing = Adhesion::where('user_id', $userId)->where('club_id', $clubId)->first();
 
         if ($existing) {
-            return response()->json(['message' => 'Vous avez déjà une demande en cours pour ce club.'], 409);
+            if ($existing->statut === 'en_attente') {
+                return response()->json(['message' => 'Vous avez déjà une demande en cours pour ce club.'], 409);
+            }
+            if ($existing->statut === 'accepté') {
+                $club = Club::findOrFail($clubId);
+                if ($club->membres()->where('user_id', $userId)->exists()) {
+                    return response()->json(['message' => 'Vous êtes déjà membre de ce club.'], 409);
+                }
+                // User left the club — allow re-application
+                $existing->update(['statut' => 'en_attente']);
+                return response()->json([
+                    'message'  => 'Demande d\'adhésion envoyée avec succès. En attente de validation.',
+                    'adhesion' => $existing,
+                ], 201);
+            }
+            // statut === 'refusé' → allow re-application
+            $existing->update(['statut' => 'en_attente']);
+            return response()->json([
+                'message'  => 'Demande d\'adhésion envoyée avec succès. En attente de validation.',
+                'adhesion' => $existing,
+            ], 201);
         }
 
         $adhesion = Adhesion::create([
@@ -121,6 +141,10 @@ class AdhesionController extends Controller
 
         if ($statut) {
             $query->where('statut', $statut);
+        }
+
+        if ($request->has('club_id')) {
+            $query->where('club_id', $request->club_id);
         }
 
         $adhesions = $query->with(['user:id,prenom,nom,name,email', 'club:id,nom,createur_id'])->get();

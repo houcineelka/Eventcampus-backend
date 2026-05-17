@@ -10,7 +10,7 @@ class UpdateEventRequest extends FormRequest
     public function authorize(): bool
     {
         $event = Event::findOrFail($this->route('id'));
-        return $this->user()->id === $event->user_id && $this->user()->id === $event->club->createur_id;
+        return $this->user()->id === $event->user_id || $this->user()->id === $event->club->createur_id;
     }
 
     public function rules(): array
@@ -23,7 +23,7 @@ class UpdateEventRequest extends FormRequest
             'date_fin' => 'required|date_format:Y-m-d|after_or_equal:date',
             'heure_fin' => 'required|date_format:H:i',
             'lieu' => 'required|string|max:255',
-            'categorie' => 'required|string|in:Conférence,Atelier,Soirée,Réunion de club,Hackathon,Environnement',
+            'categorie' => 'required|string|max:100',
             'club_id' => 'required|integer|exists:clubs,id',
             'capacite_max' => 'required|integer|min:1',
         ];
@@ -59,7 +59,7 @@ class UpdateEventRequest extends FormRequest
 
             'categorie.required' => 'La catégorie est requise.',
             'categorie.string' => 'La catégorie doit être une chaîne de caractères.',
-            'categorie.in' => 'La catégorie doit être l\'une des valeurs autorisées: Conférence, Atelier, Soirée, Réunion de club, Hackathon, Environnement.',
+            'categorie.max' => 'La catégorie ne peut pas dépasser 100 caractères.',
 
             'club_id.required' => 'L\'ID du club est requis.',
             'club_id.integer' => 'L\'ID du club doit être un entier.',
