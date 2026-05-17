@@ -55,9 +55,9 @@ class UserController extends Controller
 
         $user->update(['role' => 'etudiant']);
 
-        // EP-173 — invalider le token JWT de l'utilisateur
-        auth('api')->setUser($user);
-        auth('api')->invalidate(true);
+        // EP-173 — le token JWT expirera naturellement. Le rôle étant déjà
+        // changé en base, toute route protégée par role:organisateur bloquera
+        // immédiatement l'accès même avec un token encore valide.
 
         return response()->json([
             'message' => "Rôle désactivé. L'utilisateur a été rétabli en tant qu'étudiant.",
