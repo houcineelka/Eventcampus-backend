@@ -50,7 +50,7 @@ class ClubController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Club::withCount('membres');
+        $query = Club::withCount('membres')->where('statut', 'validé');
 
         if ($request->has('categorie') && $request->categorie !== 'Tous') {
             $query->where('categorie', $request->categorie);
@@ -89,6 +89,11 @@ class ClubController extends Controller
         ->findOrFail($id);
 
     $userId = $request->user()->id;
+    $user   = $request->user();
+
+    if ($club->statut !== 'validé' && $club->createur_id !== $userId && $user->role !== 'admin') {
+        return response()->json(['message' => 'Ce club n\'est pas encore publié.'], 403);
+    }
 
     $club->is_member = $club->membres->contains('id', $userId);
 
