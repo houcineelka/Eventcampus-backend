@@ -42,7 +42,8 @@ class Event extends Model
     public function participants()
     {
         return $this->belongsToMany(User::class, 'event_user')
-                    ->using(EventUser::class)   // ← AJOUT branche 5
+                    ->using(EventUser::class)
+                    ->withPivot('calendar_added')
                     ->withTimestamps();
     }
 

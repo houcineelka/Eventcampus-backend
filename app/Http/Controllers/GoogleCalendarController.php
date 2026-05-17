@@ -124,6 +124,10 @@ class GoogleCalendarController extends Controller
 
         $added = app(GoogleCalendarService::class)->addEvent($user, $event);
 
+        if ($added) {
+            $event->participants()->updateExistingPivot($user->id, ['calendar_added' => true]);
+        }
+
         return response()->json([
             'calendar_added' => $added,
             'message'        => $added
