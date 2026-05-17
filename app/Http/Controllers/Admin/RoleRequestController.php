@@ -37,4 +37,21 @@ class RoleRequestController extends Controller
             'role_request' => $roleRequest->fresh(),
         ]); */
     }
+
+    public function refuse(RoleRequest $roleRequest)
+    {
+        if ($roleRequest->status !== 'pending') {
+            return response()->json(['message' => 'Demande déjà traitée.'], 409);
+        }
+
+        $roleRequest->update(['status' => 'refused']);
+
+        /*EP-152 : notification
+        $roleRequest->user->notify(new RoleRequestResultNotification('refused'));
+
+        return response()->json([
+            'message' => 'Demande refusée.',
+            'role_request' => $roleRequest->fresh(),
+        ]); */
+    }
 }
