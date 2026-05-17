@@ -45,6 +45,11 @@ class GoogleCalendarController extends Controller
      */
     public function callback(Request $request)
     {
+        // L'utilisateur a refusé l'accès sur la page de consentement Google
+        if ($request->error === 'access_denied') {
+            return redirect(env('FRONTEND_URL') . '/student/profile?calendar=denied');
+        }
+
         $code  = $request->code;
         $state = $request->state;
 
