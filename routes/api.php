@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\UserController;
 use App\Http\Controllers\RoleRequestController;
@@ -74,6 +75,17 @@ Route::middleware('auth:api')->group(function () {
 
     Route::middleware('role:etudiant')->group(function () {
         Route::get('/student/dashboard', [StudentController::class, 'dashboard']);
+    });
+
+    Route::prefix('admin')->middleware('role:admin')->group(function () {
+        Route::get('/users/stats', [AdminUserController::class, 'stats']);
+        Route::get('/users', [AdminUserController::class, 'index']);
+        Route::get('/users/{user}', [AdminUserController::class, 'show']);
+        Route::put('/users/{user}', [AdminUserController::class, 'update']);
+        Route::patch('/users/{user}/role', [AdminUserController::class, 'updateRole']);
+        Route::post('/users/{user}/ban', [AdminUserController::class, 'ban']);
+        Route::post('/users/{user}/unban', [AdminUserController::class, 'unban']);
+        Route::delete('/users/{user}', [AdminUserController::class, 'destroy']);
     });
 
 
