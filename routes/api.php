@@ -11,6 +11,7 @@ use App\Http\Controllers\EventController;
 use App\Http\Controllers\InscriptionController;
 use App\Http\Controllers\ProfilController;
 use App\Http\Controllers\MessageController;
+use App\Http\Controllers\Admin\StatsController;
 
 
 use Illuminate\Http\Request;
@@ -95,7 +96,12 @@ Route::middleware('auth:api')->group(function () {
         Route::post('/users/{user}/ban', [AdminUserController::class, 'ban']);
         Route::post('/users/{user}/unban', [AdminUserController::class, 'unban']);
         Route::delete('/users/{user}', [AdminUserController::class, 'destroy']);
-    });
+
+        //
+        Route::get('/role-requests', [RoleRequestController::class, 'index']);
+        Route::put('/role-requests/{roleRequest}/approve', [RoleRequestController::class, 'approve']);
+        Route::put('/role-requests/{roleRequest}/refuse', [RoleRequestController::class, 'refuse']);
+        });
 
 
 });
