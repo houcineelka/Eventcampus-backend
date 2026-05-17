@@ -79,9 +79,10 @@ Route::middleware('auth:api')->group(function () {
     });
 
     // Google Calendar
-    Route::get('/google/calendar/auth-url',  [GoogleCalendarController::class, 'authUrl']);
-    Route::get('/google/calendar/status',    [GoogleCalendarController::class, 'status']);
-    Route::delete('/google/calendar/disconnect', [GoogleCalendarController::class, 'disconnect']);
+    Route::get('/google/calendar/auth-url',                       [GoogleCalendarController::class, 'authUrl']);
+    Route::get('/google/calendar/status',                         [GoogleCalendarController::class, 'status']);
+    Route::delete('/google/calendar/disconnect',                  [GoogleCalendarController::class, 'disconnect']);
+    Route::post('/events/{id}/inscriptions/calendar',             [GoogleCalendarController::class, 'addInscriptionToCalendar']);
 
     Route::middleware('role:etudiant')->group(function () {
         Route::get('/student/dashboard', [StudentController::class, 'dashboard']);
