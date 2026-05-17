@@ -83,6 +83,7 @@ Route::middleware('auth:api')->group(function () {
     Route::middleware('role:admin')->group(function () {
         Route::put('/users/{id}/roles/{role}/activate',   [UserController::class, 'activateRole']);
         Route::put('/users/{id}/roles/{role}/deactivate', [UserController::class, 'deactivateRole']);
+        Route::put('/users/{id}/desactiver',              [UserController::class, 'desactiver']);
     });
 
     Route::prefix('admin')->middleware('role:admin')->group(function () {
