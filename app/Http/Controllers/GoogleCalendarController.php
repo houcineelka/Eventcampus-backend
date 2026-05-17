@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Event;
 use App\Models\User;
+use App\Services\GoogleCalendarService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
@@ -101,5 +103,32 @@ class GoogleCalendarController extends Controller
         $request->user()->update(['google_calendar_token' => null]);
 
         return response()->json(['message' => 'Google Calendar déconnecté.']);
+    }
+
+    /**
+     * POST /api/events/{id}/inscriptions/calendar
+     * Ajoute l'événement au Google Agenda de l'étudiant connecté.
+     */
+    public function addInscriptionToCalendar(Request $request, int $id)
+    {
+        $user  = $request->user();
+        $event = Event::findOrFail($id);
+
+        if (!$event->estInscrit($user->id)) {
+            return response()->json(['message' => 'Vous n\'êtes pas inscrit à cet événement.'], 403);
+        }
+
+        if (!$user->google_calendar_token) {
+            return response()->json(['message' => 'Google Agenda non connecté.', 'calendar_added' => false], 200);
+        }
+
+        $added = app(GoogleCalendarService::class)->addEvent($user, $event);
+
+        return response()->json([
+            'calendar_added' => $added,
+            'message'        => $added
+                ? 'Événement ajouté à votre Google Agenda.'
+                : 'Impossible d\'ajouter l\'événement au calendrier.',
+        ]);
     }
 }
