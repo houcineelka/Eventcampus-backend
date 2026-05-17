@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Event;
+use App\Models\Categorie;
 use App\Http\Requests\StoreEventRequest;
 use App\Http\Requests\UpdateEventRequest;
 use App\Notifications\NouvelleInscriptionNotification;
@@ -12,6 +13,27 @@ use Illuminate\Support\Facades\Auth;
 
 class EventController extends Controller
 {
+    /**
+     * GET /api/events/categories
+     */
+    public function categories()
+    {
+        $categories = Categorie::orderBy('nom')->get(['nom', 'emoji']);
+        return response()->json($categories);
+    }
+
+    private function syncCategorie(string $nom, ?string $emoji = null): void
+    {
+        $nom = trim($nom);
+        if (!$nom) return;
+        $existing = Categorie::whereRaw('LOWER(nom) = ?', [mb_strtolower($nom)])->first();
+        if (!$existing) {
+            Categorie::create(['nom' => $nom, 'emoji' => $emoji ?: '📅']);
+        } elseif ($emoji && !$existing->emoji) {
+            $existing->update(['emoji' => $emoji]);
+        }
+    }
+
     /**
      * GET /api/events
      */
@@ -125,6 +147,8 @@ class EventController extends Controller
             'user_id' => auth()->id(),
         ]);
 
+        $this->syncCategorie($event->categorie, $request->input('categorie_emoji'));
+
         $event->load('club');
 
         return response()->json(
@@ -161,10 +185,10 @@ class EventController extends Controller
         // Update all fields with validated data
         $event->update($request->validated());
 
-        // Reset status to En attente
         $event->update(['statut' => 'En attente']);
 
-        // Load relationships for response
+        $this->syncCategorie($event->categorie, $request->input('categorie_emoji'));
+
         $event->load('club');
 
         // Notify club creator
