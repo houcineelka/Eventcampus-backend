@@ -12,7 +12,7 @@ use App\Http\Controllers\InscriptionController;
 use App\Http\Controllers\ProfilController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\Admin\StatsController;
-use App\Http\Controllers\GoogleCalendarController;
+use App\Http\Controllers\Admin\AdminClubController;
 
 
 use Illuminate\Http\Request;
@@ -78,12 +78,6 @@ Route::middleware('auth:api')->group(function () {
         return response()->json($request->user()->notifications);
     });
 
-    // Google Calendar
-    Route::get('/google/calendar/auth-url',                       [GoogleCalendarController::class, 'authUrl']);
-    Route::get('/google/calendar/status',                         [GoogleCalendarController::class, 'status']);
-    Route::delete('/google/calendar/disconnect',                  [GoogleCalendarController::class, 'disconnect']);
-    Route::post('/events/{id}/inscriptions/calendar',             [GoogleCalendarController::class, 'addInscriptionToCalendar']);
-
     Route::middleware('role:etudiant')->group(function () {
         Route::get('/student/dashboard', [StudentController::class, 'dashboard']);
     });
@@ -108,6 +102,11 @@ Route::middleware('auth:api')->group(function () {
         Route::get('/role-requests', [RoleRequestController::class, 'index']);
         Route::put('/role-requests/{roleRequest}/approve', [RoleRequestController::class, 'approve']);
         Route::put('/role-requests/{roleRequest}/refuse', [RoleRequestController::class, 'refuse']);
+
+        // Clubs validation
+        Route::get('/clubs/pending',         [AdminClubController::class, 'pending']);
+        Route::put('/clubs/{id}/approve',    [AdminClubController::class, 'approve']);
+        Route::put('/clubs/{id}/reject',     [AdminClubController::class, 'reject']);
         });
 
 
