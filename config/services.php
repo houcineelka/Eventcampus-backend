@@ -45,4 +45,10 @@ return [
         'redirect' => env('GOOGLE_CALENDAR_REDIRECT_URI', 'http://127.0.0.1:8000/auth/google/calendar/callback'),
     ],
 
+    'twilio' => [
+        'sid'            => env('TWILIO_ACCOUNT_SID'),
+        'token'          => env('TWILIO_AUTH_TOKEN'),
+        'whatsapp_from'  => env('TWILIO_WHATSAPP_FROM', 'whatsapp:+14155238886'),
+    ],
+
 ];
