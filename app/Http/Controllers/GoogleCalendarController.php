@@ -124,7 +124,11 @@ class GoogleCalendarController extends Controller
         }
 
         if (!$user->google_calendar_token) {
-            return response()->json(['message' => 'Google Agenda non connecté.', 'calendar_added' => false], 200);
+            return response()->json([
+                'calendar_added'  => false,
+                'not_connected'   => true,
+                'message'         => 'Google Agenda non connecté.',
+            ], 200);
         }
 
         $added = app(GoogleCalendarService::class)->addEvent($user, $event);
