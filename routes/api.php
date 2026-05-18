@@ -108,8 +108,12 @@ Route::middleware('auth:api')->group(function () {
 
         // Clubs validation
         Route::get('/clubs/pending',         [AdminClubController::class, 'pending']);
+        Route::get('/clubs/validated',       [AdminClubController::class, 'validated']);
+        Route::get('/clubs/suspended',       [AdminClubController::class, 'suspended']);
         Route::put('/clubs/{id}/valider',    [AdminClubController::class, 'valider']);
         Route::put('/clubs/{id}/refuser',    [AdminClubController::class, 'refuser']);
+        Route::put('/clubs/{id}/suspendre',  [AdminClubController::class, 'suspendre']);
+        Route::put('/clubs/{id}/reactiver',  [AdminClubController::class, 'reactiver']);
         });
 
 
