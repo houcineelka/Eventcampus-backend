@@ -13,6 +13,7 @@ use App\Http\Controllers\ProfilController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\Admin\StatsController;
 use App\Http\Controllers\Admin\AdminClubController;
+use App\Http\Controllers\Admin\AdminEventController;
 
 
 use Illuminate\Http\Request;
@@ -115,6 +116,12 @@ Route::middleware('auth:api')->group(function () {
         Route::put('/clubs/{id}/suspendre',  [AdminClubController::class, 'suspendre']);
         Route::put('/clubs/{id}/reactiver',  [AdminClubController::class, 'reactiver']);
         Route::delete('/clubs/{id}',         [AdminClubController::class, 'destroy']);
+
+        // Events validation
+        Route::get('/events/pending',        [AdminEventController::class, 'pending']);
+        Route::get('/events',                [AdminEventController::class, 'index']);
+        Route::put('/events/{id}/valider',   [AdminEventController::class, 'valider']);
+        Route::put('/events/{id}/refuser',   [AdminEventController::class, 'refuser']);
         });
 
 
