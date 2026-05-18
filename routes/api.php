@@ -114,6 +114,7 @@ Route::middleware('auth:api')->group(function () {
         Route::put('/clubs/{id}/refuser',    [AdminClubController::class, 'refuser']);
         Route::put('/clubs/{id}/suspendre',  [AdminClubController::class, 'suspendre']);
         Route::put('/clubs/{id}/reactiver',  [AdminClubController::class, 'reactiver']);
+        Route::delete('/clubs/{id}',         [AdminClubController::class, 'destroy']);
         });
 
 
