@@ -41,42 +41,34 @@ class EventController extends Controller
 {
     $query = Event::with('club')->where('statut', 'valide');
 
-    // Filtre par tags
+    // Filtre par tags (EP-200)
     if ($request->has('tags') && $request->tags) {
         $tags = explode(',', $request->tags);
         foreach ($tags as $tag) {
-            $tag = trim($tag);
-            $query->whereJsonContains('tags', $tag);
-    {
-        $query = Event::with('club')->whereIn('statut', ['Validé', 'Accepté']);
-
-        // Filtres optionnels
-        if ($request->has('categorie') && $request->categorie !== 'Tous') {
-            $query->where('categorie', $request->categorie);
-        }
-
-        if ($request->has('club_id')) {
-            $query->where('club_id', $request->club_id);
+            $query->whereJsonContains('tags', trim($tag));
         }
     }
 
     // Filtre par catégorie
-    if ($request->has('categorie') && $request->categorie) {
+    if ($request->has('categorie') && $request->categorie && $request->categorie !== 'Tous') {
         $query->where('categorie', $request->categorie);
     }
 
-    // Tri
-    $sort = $request->get('sort', 'recent');
-    match ($sort) {
-        'recent' => $query->orderBy('date', 'desc'),
+    // Filtre par club
+    if ($request->has('club_id')) {
+        $query->where('club_id', $request->club_id);
+    }
+
+    // Tri (EP-201)
+    match ($request->get('sort', 'recent')) {
         'ancien' => $query->orderBy('date', 'asc'),
         default  => $query->orderBy('date', 'desc'),
     };
 
     $events = $query->get()->map(function ($event) {
         return [
-            'id'                => $event->id,
-            'titre'             => $event->titre,
+            'id'                 => $event->id,
+            'titre'              => $event->titre,
             'description'       => $event->description,
             'date'              => $event->date,
             'heure'             => $event->heure,

@@ -26,6 +26,8 @@ class UpdateEventRequest extends FormRequest
             'categorie' => 'required|string|max:100',
             'club_id' => 'required|integer|exists:clubs,id',
             'capacite_max' => 'required|integer|min:1',
+            'tags'         => 'nullable|array',        
+            'tags.*'       => 'string|max:50',  
         ];
     }
 
