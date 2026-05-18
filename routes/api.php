@@ -93,6 +93,22 @@ Route::middleware('auth:api')->group(function () {
     });
 
     Route::prefix('admin')->middleware('role:admin')->group(function () {
+    Route::get('/users/stats', [AdminUserController::class, 'stats']);
+    Route::get('/users', [AdminUserController::class, 'index']);
+    Route::get('/users/{user}', [AdminUserController::class, 'show']);
+    Route::put('/users/{user}', [AdminUserController::class, 'update']);
+    Route::patch('/users/{user}/role', [AdminUserController::class, 'updateRole']);
+    Route::post('/users/{user}/ban', [AdminUserController::class, 'ban']);
+    Route::post('/users/{user}/unban', [AdminUserController::class, 'unban']);
+    Route::delete('/users/{user}', [AdminUserController::class, 'destroy']);
+
+    Route::get('/role-requests', [AdminRoleRequestController::class, 'index']);
+    Route::put('/role-requests/{roleRequest}/approve', [AdminRoleRequestController::class, 'approve']);
+    Route::put('/role-requests/{roleRequest}/refuse', [AdminRoleRequestController::class, 'refuse']);
+    Route::get('/stats', [StatsController::class, 'index']);
+
+});
+
         Route::get('/users/stats', [AdminUserController::class, 'stats']);
         Route::get('/users', [AdminUserController::class, 'index']);
         Route::get('/users/{user}', [AdminUserController::class, 'show']);

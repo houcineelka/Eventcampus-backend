@@ -24,6 +24,7 @@ class Event extends Model
         'capacite_max',
         'statut',
         'user_id',
+        'tags',
     ];
 
     protected $appends = ['inscrits', 'est_complet'];
@@ -95,5 +96,12 @@ class Event extends Model
                     ->where('statut', 'en_attente')
                     ->max('position');
         return ($max ?? 0) + 1;
+    }
+
+    protected function casts(): array
+    {
+        return [
+            'tags' => 'array', // ← ajoute
+        ];
     }
 }
