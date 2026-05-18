@@ -106,9 +106,7 @@ Route::middleware('auth:api')->group(function () {
     Route::put('/role-requests/{roleRequest}/approve', [AdminRoleRequestController::class, 'approve']);
     Route::put('/role-requests/{roleRequest}/refuse', [AdminRoleRequestController::class, 'refuse']);
     
-
-});
-        Route::get('/users/stats', [AdminUserController::class, 'stats']);
+  Route::get('/users/stats', [AdminUserController::class, 'stats']);
         Route::get('/users', [AdminUserController::class, 'index']);
         Route::get('/users/{user}', [AdminUserController::class, 'show']);
         Route::put('/users/{user}', [AdminUserController::class, 'update']);
@@ -140,6 +138,6 @@ Route::middleware('auth:api')->group(function () {
         Route::put('/events/{id}/valider',   [AdminEventController::class, 'valider']);
         Route::put('/events/{id}/refuser',   [AdminEventController::class, 'refuser']);
         });
-
-
 });
+      
+
