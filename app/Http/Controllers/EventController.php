@@ -39,7 +39,7 @@ class EventController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Event::with('club');
+        $query = Event::with('club')->whereIn('statut', ['Validé', 'Accepté']);
 
         // Filtres optionnels
         if ($request->has('categorie') && $request->categorie !== 'Tous') {
@@ -67,6 +67,13 @@ class EventController extends Controller
     {
         $event = Event::with(['club', 'participants'])
             ->findOrFail($id);
+
+        $user = $request->user();
+        $isOwner = $event->club && $event->club->createur_id === $user->id;
+
+        if (!in_array($event->statut, ['Validé', 'Accepté']) && !$isOwner && $user->role !== 'admin') {
+            return response()->json(['message' => 'Cet événement n\'est pas encore publié.'], 403);
+        }
 
         // Appel de formatEvent avec $detailed = true
         return response()->json($this->formatEvent($event, true));
