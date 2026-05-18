@@ -101,7 +101,7 @@ Route::middleware('auth:api')->group(function () {
     Route::get('/role-requests', [AdminRoleRequestController::class, 'index']);
     Route::put('/role-requests/{roleRequest}/approve', [AdminRoleRequestController::class, 'approve']);
     Route::put('/role-requests/{roleRequest}/refuse', [AdminRoleRequestController::class, 'refuse']);
-    
+    Route::get('/stats', [StatsController::class, 'index']);
 
 });
 
