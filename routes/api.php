@@ -12,6 +12,8 @@ use App\Http\Controllers\InscriptionController;
 use App\Http\Controllers\ProfilController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\Admin\StatsController;
+use App\Http\Controllers\Admin\RoleRequestController as AdminRoleRequestController;
+
 
 
 use Illuminate\Http\Request;
@@ -87,20 +89,21 @@ Route::middleware('auth:api')->group(function () {
     });
 
     Route::prefix('admin')->middleware('role:admin')->group(function () {
-        Route::get('/users/stats', [AdminUserController::class, 'stats']);
-        Route::get('/users', [AdminUserController::class, 'index']);
-        Route::get('/users/{user}', [AdminUserController::class, 'show']);
-        Route::put('/users/{user}', [AdminUserController::class, 'update']);
-        Route::patch('/users/{user}/role', [AdminUserController::class, 'updateRole']);
-        Route::post('/users/{user}/ban', [AdminUserController::class, 'ban']);
-        Route::post('/users/{user}/unban', [AdminUserController::class, 'unban']);
-        Route::delete('/users/{user}', [AdminUserController::class, 'destroy']);
+    Route::get('/users/stats', [AdminUserController::class, 'stats']);
+    Route::get('/users', [AdminUserController::class, 'index']);
+    Route::get('/users/{user}', [AdminUserController::class, 'show']);
+    Route::put('/users/{user}', [AdminUserController::class, 'update']);
+    Route::patch('/users/{user}/role', [AdminUserController::class, 'updateRole']);
+    Route::post('/users/{user}/ban', [AdminUserController::class, 'ban']);
+    Route::post('/users/{user}/unban', [AdminUserController::class, 'unban']);
+    Route::delete('/users/{user}', [AdminUserController::class, 'destroy']);
 
-        //
-        Route::get('/role-requests', [RoleRequestController::class, 'index']);
-        Route::put('/role-requests/{roleRequest}/approve', [RoleRequestController::class, 'approve']);
-        Route::put('/role-requests/{roleRequest}/refuse', [RoleRequestController::class, 'refuse']);
-        });
+    Route::get('/role-requests', [AdminRoleRequestController::class, 'index']);
+    Route::put('/role-requests/{roleRequest}/approve', [AdminRoleRequestController::class, 'approve']);
+    Route::put('/role-requests/{roleRequest}/refuse', [AdminRoleRequestController::class, 'refuse']);
+    
+
+});
 
 
 });

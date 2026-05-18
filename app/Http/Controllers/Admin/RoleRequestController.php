@@ -44,14 +44,13 @@ class RoleRequestController extends Controller
             return response()->json(['message' => 'Demande déjà traitée.'], 409);
         }
 
-        $roleRequest->update(['status' => 'refused']);
+        $roleRequest->update(['status' => 'rejected']); 
 
-        // notification
         $roleRequest->user->notify(new RoleRequestResultNotification('refused'));
 
         return response()->json([
             'message' => 'Demande refusée.',
             'role_request' => $roleRequest->fresh(),
-        ]); 
+        ]);
     }
 }
