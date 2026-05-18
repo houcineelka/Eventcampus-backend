@@ -39,7 +39,7 @@ class EventController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Event::with('club');
+        $query = Event::with('club')->whereIn('statut', ['Validé', 'Accepté']);
 
         // Filtres optionnels
         if ($request->has('categorie') && $request->categorie !== 'Tous') {
@@ -67,6 +67,13 @@ class EventController extends Controller
     {
         $event = Event::with(['club', 'participants'])
             ->findOrFail($id);
+
+        $user = $request->user();
+        $isOwner = $event->club && $event->club->createur_id === $user->id;
+
+        if (!in_array($event->statut, ['Validé', 'Accepté']) && !$isOwner && $user->role !== 'admin') {
+            return response()->json(['message' => 'Cet événement n\'est pas encore publié.'], 403);
+        }
 
         // Appel de formatEvent avec $detailed = true
         return response()->json($this->formatEvent($event, true));
@@ -248,9 +255,14 @@ class EventController extends Controller
         $user = Auth::user() ?? auth('api')->user();
         $userId = $user?->id;
 
-        $isRegistered = $userId ? $event->estInscrit($userId) : false;
-        $isWaitlisted = $userId ? $event->estEnListeAttente($userId) : false;
-        $waitlistPos  = $isWaitlisted ? $event->rangListeAttente($userId) : null;
+        $isRegistered  = $userId ? $event->estInscrit($userId) : false;
+        $isWaitlisted  = $userId ? $event->estEnListeAttente($userId) : false;
+        $waitlistPos   = $isWaitlisted ? $event->rangListeAttente($userId) : null;
+        $calendarAdded = false;
+        if ($isRegistered && $userId) {
+            $pivot = $event->participants()->where('user_id', $userId)->first()?->pivot;
+            $calendarAdded = (bool) ($pivot?->calendar_added ?? false);
+        }
 
         $data = [
             'id'                  => $event->id,
@@ -273,6 +285,7 @@ class EventController extends Controller
             'is_registered'       => $isRegistered,
             'is_waitlisted'       => $isWaitlisted,
             'waitlist_position'   => $waitlistPos,
+            'calendar_added'      => $calendarAdded,
             // NOUVEAU — Branche 3 : Total de la liste d'attente
             'waitlist_total'      => $event->listeAttente()->count(),
         ];

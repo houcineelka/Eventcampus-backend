@@ -11,6 +11,8 @@ class EventUser extends Pivot
 {
     protected $table = 'event_user';
 
+    protected $fillable = ['event_id', 'user_id', 'calendar_added'];
+
     protected static function booted(): void
     {
         static::deleted(function (EventUser $pivot) {

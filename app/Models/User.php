@@ -20,12 +20,16 @@ class User extends Authenticatable implements JWTSubject
             'password',
             'role',
             'email_reminders',
+            'whatsapp_reminders',
+            'phone',
             'google_id',
+            'google_calendar_token',
         ];
 
     protected $hidden = [
         'password',
         'remember_token',
+        'google_calendar_token',
     ];
 
     protected function casts(): array
