@@ -14,6 +14,8 @@ use App\Http\Controllers\MessageController;
 use App\Http\Controllers\Admin\StatsController;
 use App\Http\Controllers\Admin\RoleRequestController as AdminRoleRequestController;
 
+use App\Http\Controllers\Admin\AdminClubController;
+use App\Http\Controllers\Admin\AdminEventController;
 
 
 use Illuminate\Http\Request;
@@ -28,6 +30,7 @@ Route::middleware('auth:api')->group(function () {
     Route::get('/me', [UserController::class, 'me']);
     Route::post('/logout', [UserController::class, 'logout']);
     Route::patch('/users/me/preferences', [UserController::class, 'updatePreferences']);
+    Route::patch('/users/me/phone',       [UserController::class, 'updatePhone']);
 
      // Clubs
     Route::post('/clubs',             [ClubController::class, 'store']);
@@ -86,6 +89,7 @@ Route::middleware('auth:api')->group(function () {
     Route::middleware('role:admin')->group(function () {
         Route::put('/users/{id}/roles/{role}/activate',   [UserController::class, 'activateRole']);
         Route::put('/users/{id}/roles/{role}/deactivate', [UserController::class, 'deactivateRole']);
+        Route::put('/users/{id}/desactiver',              [UserController::class, 'desactiver']);
     });
 
     Route::prefix('admin')->middleware('role:admin')->group(function () {
@@ -105,5 +109,34 @@ Route::middleware('auth:api')->group(function () {
 
 });
 
+        Route::get('/users/stats', [AdminUserController::class, 'stats']);
+        Route::get('/users', [AdminUserController::class, 'index']);
+        Route::get('/users/{user}', [AdminUserController::class, 'show']);
+        Route::put('/users/{user}', [AdminUserController::class, 'update']);
+        Route::patch('/users/{user}/role', [AdminUserController::class, 'updateRole']);
+        Route::post('/users/{user}/ban', [AdminUserController::class, 'ban']);
+        Route::post('/users/{user}/unban', [AdminUserController::class, 'unban']);
+        Route::delete('/users/{user}', [AdminUserController::class, 'destroy']);
+
+        Route::get('/role-requests', [AdminRoleRequestController::class, 'index']);
+        Route::put('/role-requests/{roleRequest}/approve', [AdminRoleRequestController::class, 'approve']);
+        Route::put('/role-requests/{roleRequest}/refuse', [AdminRoleRequestController::class, 'refuse']);
+
+        // Clubs validation
+        Route::get('/clubs/pending',         [AdminClubController::class, 'pending']);
+        Route::get('/clubs/validated',       [AdminClubController::class, 'validated']);
+        Route::get('/clubs/suspended',       [AdminClubController::class, 'suspended']);
+        Route::put('/clubs/{id}/valider',    [AdminClubController::class, 'valider']);
+        Route::put('/clubs/{id}/refuser',    [AdminClubController::class, 'refuser']);
+        Route::put('/clubs/{id}/suspendre',  [AdminClubController::class, 'suspendre']);
+        Route::put('/clubs/{id}/reactiver',  [AdminClubController::class, 'reactiver']);
+        Route::delete('/clubs/{id}',         [AdminClubController::class, 'destroy']);
+
+        // Events validation
+        Route::get('/events/pending',        [AdminEventController::class, 'pending']);
+        Route::get('/events',                [AdminEventController::class, 'index']);
+        Route::put('/events/{id}/valider',   [AdminEventController::class, 'valider']);
+        Route::put('/events/{id}/refuser',   [AdminEventController::class, 'refuser']);
+    });
 
 });
