@@ -38,27 +38,54 @@ class EventController extends Controller
      * GET /api/events
      */
     public function index(Request $request)
-    {
-        $query = Event::with('club');
+{
+    $query = Event::with('club')->where('statut', 'valide');
 
-        // Filtres optionnels
-        if ($request->has('categorie') && $request->categorie !== 'Tous') {
-            $query->where('categorie', $request->categorie);
+    // Filtre par tags
+    if ($request->has('tags') && $request->tags) {
+        $tags = explode(',', $request->tags);
+        foreach ($tags as $tag) {
+            $tag = trim($tag);
+            $query->whereJsonContains('tags', $tag);
         }
-
-        if ($request->has('club_id')) {
-            $query->where('club_id', $request->club_id);
-        }
-
-        $events = $query->latest()->get();
-
-        // Utilisation de formatEvent pour chaque événement
-        $formattedEvents = $events->map(function ($event) {
-            return $this->formatEvent($event, false);
-        });
-
-        return response()->json($formattedEvents);
     }
+
+    // Filtre par catégorie
+    if ($request->has('categorie') && $request->categorie) {
+        $query->where('categorie', $request->categorie);
+    }
+
+    // Tri
+    $sort = $request->get('sort', 'recent');
+    match ($sort) {
+        'recent' => $query->orderBy('date', 'desc'),
+        'ancien' => $query->orderBy('date', 'asc'),
+        default  => $query->orderBy('date', 'desc'),
+    };
+
+    $events = $query->get()->map(function ($event) {
+        return [
+            'id'                => $event->id,
+            'titre'             => $event->titre,
+            'description'       => $event->description,
+            'date'              => $event->date,
+            'heure'             => $event->heure,
+            'lieu'              => $event->lieu,
+            'categorie'         => $event->categorie,
+            'tags'              => $event->tags ?? [],
+            'places_disponibles'=> $event->places_disponibles,
+            'capacite_max'      => $event->capacite_max,
+            'statut'            => $event->statut,
+            'club_id'           => $event->club_id,
+            'club_name'         => $event->club?->nom,
+            'club'              => $event->club?->nom,
+            'inscrits'          => $event->inscrits,
+            'est_complet'       => $event->est_complet,
+        ];
+    });
+
+    return response()->json(['data' => $events]);
+}
 
     /**
      * GET /api/events/{id}
