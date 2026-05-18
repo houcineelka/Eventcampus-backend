@@ -72,6 +72,7 @@ class ClubController extends Controller
     public function show(Request $request, $id)
 {
     $club = Club::with([
+            'createur' => fn($q) => $q->select('id', 'prenom', 'nom', 'name', 'email'),
             'membres' => function($q) {
                 $q->select('users.id', 'prenom', 'nom')
                   ->withPivot('role');
@@ -103,6 +104,11 @@ class ClubController extends Controller
         ->exists();
 
     $club->logo_url = $club->logo ? asset('storage/' . $club->logo) : null;
+
+    $club->organizer = $club->createur ? [
+        'id'   => $club->createur->id,
+        'name' => $club->createur->name,
+    ] : null;
 
     return response()->json($club);
 }
