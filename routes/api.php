@@ -105,6 +105,7 @@ Route::middleware('auth:api')->group(function () {
         Route::get('/role-requests', [RoleRequestController::class, 'index']);
         Route::put('/role-requests/{roleRequest}/approve', [RoleRequestController::class, 'approve']);
         Route::put('/role-requests/{roleRequest}/refuse', [RoleRequestController::class, 'refuse']);
+        Route::get('/stats', [StatsController::class, 'index']);
 
         // Clubs validation
         Route::get('/clubs/pending',         [AdminClubController::class, 'pending']);
