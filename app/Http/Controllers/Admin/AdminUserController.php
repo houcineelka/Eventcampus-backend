@@ -14,7 +14,11 @@ class AdminUserController extends Controller
         $query = User::query();
 
         if ($request->has('role')) {
-            $query->where('role', $request->role);
+            if ($request->role === 'actif') {
+                $query->where('role', '!=', 'banni');
+            } else {
+                $query->where('role', $request->role);
+            }
         }
 
         if ($request->has('search')) {

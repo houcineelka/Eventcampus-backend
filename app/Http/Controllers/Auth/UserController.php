@@ -65,6 +65,45 @@ class UserController extends Controller
         ]);
     }
 
+    public function desactiver(Request $request, $id)
+    {
+        $user = User::findOrFail($id);
+
+        if ($user->id === $request->user()->id) {
+            return response()->json(['message' => 'Vous ne pouvez pas désactiver votre propre compte.'], 403);
+        }
+
+        $user->update(['role' => 'banni']);
+
+        // EP-133 — le middleware CheckRole bloque immédiatement toute requête
+        // de cet utilisateur avec le message "Votre compte est banni."
+
+        return response()->json([
+            'message' => 'Compte désactivé avec succès.',
+            'user'    => $user->fresh(),
+        ]);
+    }
+
+    public function updatePhone(Request $request)
+    {
+        $request->validate([
+            'phone'               => 'required|string|max:20',
+            'whatsapp_reminders'  => 'boolean',
+        ]);
+
+        $user = auth('api')->user();
+        $user->update([
+            'phone'              => $request->phone,
+            'whatsapp_reminders' => $request->whatsapp_reminders ?? $user->whatsapp_reminders,
+        ]);
+
+        return response()->json([
+            'message'             => 'Numéro de téléphone mis à jour avec succès.',
+            'phone'               => $user->phone,
+            'whatsapp_reminders'  => $user->whatsapp_reminders,
+        ]);
+    }
+
     public function updatePreferences(Request $request)
     {
         $request->validate([

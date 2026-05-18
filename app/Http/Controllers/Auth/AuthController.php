@@ -37,8 +37,15 @@ public function register(RegisterRequest $request)
             return response()->json(['message' => 'Email ou mot de passe incorrect.'], 401);
         }
 
+        $user = auth('api')->user();
+
+        if ($user->role === 'banni') {
+            auth('api')->logout();
+            return response()->json(['message' => 'Votre compte a été désactivé.'], 403);
+        }
+
         return response()->json([
-            'user' => auth('api')->user(),
+            'user'  => $user,
             'token' => $token,
         ]);
     }
