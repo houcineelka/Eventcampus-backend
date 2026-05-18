@@ -131,4 +131,15 @@ class AdminClubController extends Controller
 
         return response()->json(['message' => 'Club réactivé avec succès.']);
     }
+
+    /**
+     * DELETE /api/admin/clubs/{id}
+     */
+    public function destroy($id)
+    {
+        $club = Club::findOrFail($id);
+        $club->delete();
+
+        return response()->json(['message' => 'Club supprimé avec succès.']);
+    }
 }
