@@ -16,6 +16,7 @@ use App\Http\Controllers\Admin\RoleRequestController as AdminRoleRequestControll
 
 use App\Http\Controllers\Admin\AdminClubController;
 use App\Http\Controllers\Admin\AdminEventController;
+use App\Http\Controllers\GoogleCalendarController;
 
 
 use Illuminate\Http\Request;
@@ -73,8 +74,14 @@ Route::middleware('auth:api')->group(function () {
     Route::post('/inscriptions',           [EventController::class, 'inscrire']);
    
     // Inscriptions 
-    Route::post('/events/{id}/inscriptions', [InscriptionController::class, 'store']);
-    Route::delete('/events/{id}/inscriptions', [InscriptionController::class, 'destroy']);
+    Route::post('/events/{id}/inscriptions',          [InscriptionController::class, 'store']);
+    Route::delete('/events/{id}/inscriptions',        [InscriptionController::class, 'destroy']);
+    Route::post('/events/{id}/inscriptions/calendar', [GoogleCalendarController::class, 'addInscriptionToCalendar']);
+
+    // Google Calendar
+    Route::get('/google/calendar/auth-url',      [GoogleCalendarController::class, 'authUrl']);
+    Route::get('/google/calendar/status',        [GoogleCalendarController::class, 'status']);
+    Route::delete('/google/calendar/disconnect', [GoogleCalendarController::class, 'disconnect']);
     //Profil
     Route::get('/profil/inscriptions', [ProfilController::class, 'inscriptions']);
     Route::get('/messages', [MessageController::class, 'userMessages']);
