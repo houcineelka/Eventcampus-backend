@@ -12,7 +12,11 @@ use App\Http\Controllers\InscriptionController;
 use App\Http\Controllers\ProfilController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\Admin\StatsController;
+use App\Http\Controllers\Admin\RoleRequestController as AdminRoleRequestController;
+
 use App\Http\Controllers\Admin\AdminClubController;
+use App\Http\Controllers\Admin\AdminEventController;
+use App\Http\Controllers\GoogleCalendarController;
 
 
 use Illuminate\Http\Request;
@@ -70,8 +74,14 @@ Route::middleware('auth:api')->group(function () {
     Route::post('/inscriptions',           [EventController::class, 'inscrire']);
    
     // Inscriptions 
-    Route::post('/events/{id}/inscriptions', [InscriptionController::class, 'store']);
-    Route::delete('/events/{id}/inscriptions', [InscriptionController::class, 'destroy']);
+    Route::post('/events/{id}/inscriptions',          [InscriptionController::class, 'store']);
+    Route::delete('/events/{id}/inscriptions',        [InscriptionController::class, 'destroy']);
+    Route::post('/events/{id}/inscriptions/calendar', [GoogleCalendarController::class, 'addInscriptionToCalendar']);
+
+    // Google Calendar
+    Route::get('/google/calendar/auth-url',      [GoogleCalendarController::class, 'authUrl']);
+    Route::get('/google/calendar/status',        [GoogleCalendarController::class, 'status']);
+    Route::delete('/google/calendar/disconnect', [GoogleCalendarController::class, 'disconnect']);
     //Profil
     Route::get('/profil/inscriptions', [ProfilController::class, 'inscriptions']);
     Route::get('/messages', [MessageController::class, 'userMessages']);
@@ -90,7 +100,20 @@ Route::middleware('auth:api')->group(function () {
     });
 
     Route::prefix('admin')->middleware('role:admin')->group(function () {
-        Route::get('/users/stats', [AdminUserController::class, 'stats']);
+    Route::get('/users/stats', [AdminUserController::class, 'stats']);
+    Route::get('/users', [AdminUserController::class, 'index']);
+    Route::get('/users/{user}', [AdminUserController::class, 'show']);
+    Route::put('/users/{user}', [AdminUserController::class, 'update']);
+    Route::patch('/users/{user}/role', [AdminUserController::class, 'updateRole']);
+    Route::post('/users/{user}/ban', [AdminUserController::class, 'ban']);
+    Route::post('/users/{user}/unban', [AdminUserController::class, 'unban']);
+    Route::delete('/users/{user}', [AdminUserController::class, 'destroy']);
+
+    Route::get('/role-requests', [AdminRoleRequestController::class, 'index']);
+    Route::put('/role-requests/{roleRequest}/approve', [AdminRoleRequestController::class, 'approve']);
+    Route::put('/role-requests/{roleRequest}/refuse', [AdminRoleRequestController::class, 'refuse']);
+    
+  Route::get('/users/stats', [AdminUserController::class, 'stats']);
         Route::get('/users', [AdminUserController::class, 'index']);
         Route::get('/users/{user}', [AdminUserController::class, 'show']);
         Route::put('/users/{user}', [AdminUserController::class, 'update']);
@@ -116,7 +139,13 @@ Route::middleware('auth:api')->group(function () {
         Route::put('/clubs/{id}/suspendre',  [AdminClubController::class, 'suspendre']);
         Route::put('/clubs/{id}/reactiver',  [AdminClubController::class, 'reactiver']);
         Route::delete('/clubs/{id}',         [AdminClubController::class, 'destroy']);
+
+        // Events validation
+        Route::get('/events/pending',        [AdminEventController::class, 'pending']);
+        Route::get('/events',                [AdminEventController::class, 'index']);
+        Route::put('/events/{id}/valider',   [AdminEventController::class, 'valider']);
+        Route::put('/events/{id}/refuser',   [AdminEventController::class, 'refuser']);
         });
-
-
 });
+      
+
