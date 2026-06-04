@@ -78,6 +78,15 @@ Route::middleware('auth:api')->group(function () {
     Route::get('/notifications', function (Request $request) {
         return response()->json($request->user()->notifications);
     });
+    Route::patch('/notifications/{id}/read', function (Request $request, $id) {
+        $notification = $request->user()->notifications()->findOrFail($id);
+        $notification->markAsRead();
+        return response()->json(['message' => 'Notification marquée comme lue.']);
+    });
+    Route::patch('/notifications/read-all', function (Request $request) {
+        $request->user()->unreadNotifications->markAsRead();
+        return response()->json(['message' => 'Toutes les notifications marquées comme lues.']);
+    });
 
     Route::middleware('role:etudiant')->group(function () {
         Route::get('/student/dashboard', [StudentController::class, 'dashboard']);
