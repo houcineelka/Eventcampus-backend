@@ -17,13 +17,15 @@ class StoreRoleRequestRequest extends FormRequest
     public function rules(): array
     {
         $rules = [
-            'name'                => 'required|string|max:255',
+            'name'                => 'nullable|string|max:255',
             'email'               => 'required|email',
             'student_id'          => 'nullable|string|max:50',
             'is_existing_student' => 'required|boolean',
         ];
 
         if ($this->input('is_existing_student') == false) {
+            $rules['prenom']   = 'required|string|max:100';
+            $rules['nom']      = 'required|string|max:100';
             $rules['password'] = 'required|string|min:8|confirmed';
         }
 
