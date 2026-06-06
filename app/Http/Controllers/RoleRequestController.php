@@ -59,7 +59,9 @@ class RoleRequestController extends Controller
     public function handleNewUser(StoreRoleRequestRequest $request)
     {
         $user = User::create([
-            'name'     => $request->name,
+            'prenom'   => $request->prenom,
+            'nom'      => $request->nom,
+            'name'     => $request->name ?? trim($request->prenom . ' ' . $request->nom),
             'email'    => $request->email,
             'password' => $request->password,
             'role'     => 'etudiant',
