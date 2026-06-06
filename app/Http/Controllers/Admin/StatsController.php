@@ -11,12 +11,12 @@ class StatsController extends Controller
 {
     public function index()
     {
-        $totalEvents     = Event::where('statut', 'valide')->count();
-        $totalClubs      = Club::where('statut', 'actif')->count();
+        $totalEvents     = Event::where('statut', 'Validé')->count();
+        $totalClubs      = Club::where('statut', 'validé')->count();
         $totalStudents   = User::where('role', 'etudiant')->count();
 
-        $totalCapacity      = Event::where('statut', 'valide')->sum('capacite_max');
-        $totalRegistrations = Event::where('statut', 'valide')
+        $totalCapacity      = Event::where('statut', 'Validé')->sum('capacite_max');
+        $totalRegistrations = Event::where('statut', 'Validé')
             ->withCount('participants')
             ->get()
             ->sum('participants_count');
@@ -26,7 +26,7 @@ class StatsController extends Controller
             : 0;
 
         $recentEvents = Event::with('club')
-            ->where('statut', 'valide')
+            ->where('statut', 'Validé')
             ->latest()
             ->take(10)
             ->get()
