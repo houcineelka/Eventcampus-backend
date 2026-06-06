@@ -115,6 +115,13 @@ Route::middleware('auth:api')->group(function () {
         Route::put('/role-requests/{roleRequest}/approve', [AdminRoleRequestController::class, 'approve']);
         Route::put('/role-requests/{roleRequest}/refuse',  [AdminRoleRequestController::class, 'refuse']);
         Route::get('/stats',                               [StatsController::class, 'index']);
+        Route::delete('/users/{user}/reject',    [AdminUserController::class, 'destroy']);
+        Route::delete('/users/{user}',           [AdminUserController::class, 'destroy']);
+
+        Route::get('/role-requests',                              [AdminRoleRequestController::class, 'index']);
+        Route::put('/role-requests/{roleRequest}/approve',        [AdminRoleRequestController::class, 'approve']);
+        Route::put('/role-requests/{roleRequest}/refuse',         [AdminRoleRequestController::class, 'refuse']);
+        Route::get('/stats', [StatsController::class, 'index']);
 
         // Clubs validation
         Route::get('/clubs/pending',         [AdminClubController::class, 'pending']);
